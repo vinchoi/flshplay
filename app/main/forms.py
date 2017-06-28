@@ -1,13 +1,14 @@
 #coding:utf-8
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, SelectField, DateTimeField
+from wtforms import StringField, SubmitField, IntegerField, SelectField, DateTimeField, TextAreaField
 from wtforms.validators import length, DataRequired
 from ..models import Product, Product_sub
 
 
 class AddProduct(FlaskForm):
     pro_name = StringField(u'产品名称', validators=[DataRequired()])
+    person = StringField(u'对接人', validators=[DataRequired])
     # creat_time = DateTimeField()
     submit = SubmitField(u'保存')
 
@@ -21,3 +22,10 @@ class AddPackage(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(AddPackage, self).__init__(*args, **kwargs)
         self.pro_name.choices = [(pro.id, pro.pro_name) for pro in Product.query.all()]
+
+class SearchView(FlaskForm):
+    pro_name = TextAreaField()
+    person = TextAreaField()
+    package = TextAreaField()
+    last_time = TextAreaField()
+    submit = SubmitField(u'搜索')

@@ -7,6 +7,7 @@ class Product(db.Model):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     pro_name = db.Column(db.String(64), unique=True)
+    person = db.Column(db.String(10))
     create_time = db.Column(db.DateTime)
     product_sub = db.relationship('Product_sub', backref='product', lazy='dynamic')
 
