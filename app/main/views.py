@@ -47,9 +47,13 @@ def taddpack():
         return redirect(url_for('main.index'))
     return render_template('t-addpackage.html', form=form)
 
-@main.route('/t-addpackage.html', methods=['GET', 'POST'])
+@main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
     form = SearchView()
     if form.validate_on_submit():
-        'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
+        pass
+    sql=Product_sub.query.outerjoin(Product).filter()
 
+        # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
+    return render_template('t-search.html',sql=sql)
+# trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))
