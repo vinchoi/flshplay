@@ -1,0 +1,31 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+<script type="text/javascript">
+function disp_alert()
+{
+alert("我是一个消息框！")
+}
+</script>
+</head>
+<body>
+<form method="POST">
+    <!--<table>-->
+        <!--<tr>-->
+            <!--<td>product name</td>-->
+            <!--<td>{{form.pro_name}}</td>>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td></td>-->
+            <!--<td><input type="submit">{{form.submit}}}</td>-->
+        <!--</tr>-->
+        <!--</table>-->
+    {% for msg in get_flashed_messages() %}
+        alert({{msg}})
+    {% endfor %}
+    {{wtf.quick_form(form)}}
+    </form>
+</body>
+</html>

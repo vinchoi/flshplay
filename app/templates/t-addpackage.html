@@ -1,0 +1,37 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} {% endblock %}
+
+{% block content%}
+<form action="" method="post" name="addpackage">
+{{form.hidden_tag()}}
+{{wtf.form_field(form.pro_name)}}
+              {% for error in form.pro_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor%}
+{{wtf.form_field(form.package)}}
+
+{{wtf.form_field(form.last_time,class="form_datetime")}}
+{{wtf.form_field(form.submit)}}
+</form>
+{% endblock%}
+
+{% block styles %}
+{{super()}}
+<link href="{{url_for('static',filename='css/bootstrap/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+<link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block scripts %}
+<script  type="text/javascript" src="{{url_for('static',filename='js/jquery-1.8.3.min.js')}}"></script>
+<script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.js')}}"></script>
+<script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
+<script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii:ss',
+		autoclose: 1,
+    });
+</script>
+{{super()}}
+{% endblock %}
+
