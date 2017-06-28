@@ -5,13 +5,13 @@
 {% block content%}
 <form action="" method="post" name="addpackage">
 {{form.hidden_tag()}}
-{{wtf.form_field(form.pro_name)}}
-              {% for error in form.pro_name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor%}
+{{wtf.form_field(form.pro_id)}}
+{#              {% for error in form.pro_name.errors %}#}
+{#            <span style="color: red;">[{{ error }}]</span>#}
+{#            {% endfor%}#}
 {{wtf.form_field(form.package)}}
-
-{{wtf.form_field(form.last_time,class="form_datetime")}}
+{{ wtf.form_field(form.data) }}
+{{ wtf.form_field(form.data_Date,class="form_datetime") }}
 {{wtf.form_field(form.submit)}}
 </form>
 {% endblock%}
@@ -28,8 +28,9 @@
 <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
 <script type="text/javascript">
     $(".form_datetime").datetimepicker({
-        format: 'yyyy-mm-dd hh:ii:ss',
-		autoclose: 1,
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        minView:2
     });
 </script>
 {{super()}}

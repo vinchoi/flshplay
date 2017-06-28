@@ -37,11 +37,11 @@ def taddpro():
 def taddpack():
     form = AddPackage()
     if form.validate_on_submit():
-        product = Product.query.filter_by(pro_name=form.pro_name.data).first()
-        product_id = product.id
-        package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=product_id).first()
+        package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
+                                                    data_Date=form.data_Date.data).first()
         if package_exist is None:
-            package = Product_sub(product_id=product_id, package=form.package.data, last_time=form.last_time.data)
+            package = Product_sub(product_id=form.pro_id.data, package=form.package.data, data_Date=form.data_Date.data,
+                                  last_time=datetime.now(), data=form.data.data)
             db.session.add(package)
             db.session.commit()
         return redirect(url_for('main.index'))

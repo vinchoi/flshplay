@@ -2,3 +2,4 @@
 .idea/
 migrations/
 venv/
+*.DS_Store
