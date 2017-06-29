@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block head %}
+    {{ super() }}
+    <link href="{{url_for('static',filename='css/lib/jquery.dataTables.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{url_for('static',filename='css/compiled/datatables.css')}}" rel="stylesheet" type="text/css" media="screen"/>
+
+{% block title %}查询{% endblock %}
+{% endblock %}
+<body>
+    {% block content %}
+	<!-- main container -->
+    <div class="content">
+
+        <div id="pad-wrapper" class="datatables-page">
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <table cellpadding="0" cellspacing="0" border="0" class="" id="example">
+                        <thead>
+                            <tr role="row">
+                                <th tabindex="0" rowspan="1" colspan="1">产品名称
+                                </th>
+                                <th tabindex="0" rowspan="1" colspan="1">包号
+                                </th>
+                                <th tabindex="0" rowspan="1" colspan="1">当日数据
+                                </th>
+                                <th tabindex="0" rowspan="1" colspan="1">日期
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for l in result %}
+                            <tr>
+
+                                <td>{{ l.Product.pro_name}}</td>
+                                <td>{{ l.Product_sub.package}}</td>
+                                <td>{{ l.Product_sub.data }}</td>
+                                <td> {{ l.Product_sub.data_Date }}</td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script src="../static/js/jquery.dataTables.js"></script>
+    <script src="../static/js/theme.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example').dataTable({
+                "sPaginationType": "full_numbers"
+            });
+        });
+    </script>
+    {% endblock %}
+
+
+</body>
