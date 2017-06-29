@@ -3,11 +3,7 @@
 {% block title %} {% endblock %}
 
 {% block content%}
-{% for i in sql %}
-    <p>{{ i.id }} ,{{ i.pro_name }},{{ i.package }},{{ i.data }},{{i.data_Date  }}</p>
-
-
-
-
+    {% for l in result %}
+    <p>名字:{{ l.Product.pro_name}}, 包号:{{ l.Product_sub.package}},数据:{{ l.Product_sub.data }},日期:{{ l.Product_sub.data_Date }}</p>
     {% endfor %}
 {% endblock%}

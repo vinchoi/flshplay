@@ -1,20 +1,33 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %} {% endblock %}
+<body>
+<div>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+        </div>
+    {% endfor %}
+
 
 {% block content%}
+
 <form action="" method="post" name="addpackage">
 {{form.hidden_tag()}}
 {{wtf.form_field(form.pro_id)}}
-{#              {% for error in form.pro_name.errors %}#}
-{#            <span style="color: red;">[{{ error }}]</span>#}
-{#            {% endfor%}#}
 {{wtf.form_field(form.package)}}
 {{ wtf.form_field(form.data) }}
 {{ wtf.form_field(form.data_Date,class="form_datetime") }}
 {{wtf.form_field(form.submit)}}
 </form>
+
 {% endblock%}
+
+
+</body>
+
 
 {% block styles %}
 {{super()}}

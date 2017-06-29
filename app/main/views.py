@@ -31,6 +31,7 @@ def taddpro():
 
         else:
             flash('hava exic')
+            print 1
     return render_template('t-addpro.html', form=form)
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])
@@ -40,11 +41,18 @@ def taddpack():
         package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
                                                     data_Date=form.data_Date.data).first()
         if package_exist is None:
-            package = Product_sub(product_id=form.pro_id.data, package=form.package.data, data_Date=form.data_Date.data,
+            product = Product.query.filter_by(id=form.pro_id.data).first()
+            package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
                                   last_time=datetime.now(), data=form.data.data)
             db.session.add(package)
             db.session.commit()
-        return redirect(url_for('main.index'))
+            return redirect(url_for('main.index'))
+
+        else:
+            flash('wodemamayayafdpfkjdsjfisdjifosdjofijsdoifjsfjisj')
+            print '$%^&*('
+            flash('wodemamayayafdpfkjdsjfisisj')
+
     return render_template('t-addpackage.html', form=form)
 
 @main.route('/t-search.html', methods=['GET', 'POST'])
@@ -52,8 +60,10 @@ def search():
     form = SearchView()
     if form.validate_on_submit():
         pass
-    sql=Product_sub.query.outerjoin(Product).filter()
+    # sql=Product_sub.query.outerjoin(Product).filter()
+    result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+        order_by(Product.pro_name,Product_sub.package).all()
 
         # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
-    return render_template('t-search.html',sql=sql)
+    return render_template('t-search.html', result=result)
 # trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))

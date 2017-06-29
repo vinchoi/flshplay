@@ -8,7 +8,7 @@ from ..models import Product, Product_sub
 
 class AddProduct(FlaskForm):
     pro_name = StringField(u'产品名称', validators=[DataRequired()])
-    person = StringField(u'对接人', validators=[DataRequired])
+    person = StringField(u'对接人', validators=[DataRequired()])
     submit = SubmitField(u'保存')
 
 

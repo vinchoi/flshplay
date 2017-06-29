@@ -4,7 +4,7 @@ from datetime import datetime, date
 
 
 class Product(db.Model):
-    __tablename__ = 'product'
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     pro_name = db.Column(db.String(64), unique=True)
     person = db.Column(db.String(10))
@@ -23,7 +23,7 @@ class Product(db.Model):
 class Product_sub(db.Model):
     __tablename__ = 'product_sub'
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     package = db.Column(db.Integer, default=0)
     data = db.Column(db.Integer, default=0)
     data_Date = db.Column(db.Date, default=date.today())
