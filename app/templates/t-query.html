@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}  查询 {% endblock %}
 {% block head %}
-    {{ super() }}
     <link href="{{url_for('static',filename='css/lib/jquery.dataTables.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url_for('static',filename='css/compiled/datatables.css')}}" rel="stylesheet" type="text/css" media="screen"/>
-
-{% block title %}查询{% endblock %}
+    {{ super() }}
 {% endblock %}
-<body>
+
     {% block content %}
 	<!-- main container -->
     <div class="content">
@@ -52,12 +52,14 @@
         </div>
     </div>
     <!-- end main container -->
+    {% endblock %}
 
+    {% block scripts %}
 	<!-- scripts -->
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="../static/js/bootstrap.min.js"></script>
-    <script src="../static/js/jquery.dataTables.js"></script>
-    <script src="../static/js/theme.js"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/jquery.dataTables.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -66,7 +68,6 @@
             });
         });
     </script>
+
     {% endblock %}
 
-
-</body>
