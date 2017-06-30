@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}  产品管理页 {% endblock %}
+{% block head %}
+    <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{url_for('static',filename='css/compiled/datatables.css')}}" rel="stylesheet" type="text/css" media="screen"/>
+    {{ super() }}
+{% endblock %}
+
+    {% block content %}
+        	<!-- main container -->
+    <div class="content">
+
+      <div id="pad-wrapper">
+
+            <!-- products table-->
+            <!-- the script for the toggle all checkboxes from header is located in js/theme.js -->
+            <div class="table-wrapper products-table section">
+                <div class="row head">
+                    <div class="col-md-12">
+                        <h4>Products</h4>
+                    </div>
+                </div>
+
+                <div class="row filter-block">
+                    <div class="pull-right">
+                        <div class="ui-select">
+                            <select>
+                              <option>Filter users</option>
+                              <option>Signed last 30 days</option>
+                              <option>Active users</option>
+                            </select>
+                        </div>
+                        <input type="text" class="search">
+                        <a class="btn-flat success new-product">+ Add product</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-md-3">
+                                    <input type="checkbox">
+                                    产品名称
+                                </th>
+                                <th class="col-md-3">
+                                    <span class="line"></span>对接人
+                                </th>
+                                <th class="col-md-3">
+                                    <span class="line"></span>状态
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- row -->
+                            <tr class="first">
+                                <td>
+                                    <input type="checkbox">
+                                    <div class="img">
+                                        <img src="../static/img/table-img.png">
+                                    </div>
+                                    <a href="#" class="name">Generate Lorem </a>
+                                </td>
+                                <td class="description">
+                                    if you are going to use a passage of Lorem Ipsum.
+                                </td>
+                                <td>
+                                    <span class="label label-success">Active</span>
+                                    <ul class="actions">
+                                        <li><a href="#">Edit</a></li>
+                                        <li class="last"><a href="#">Delete</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- row -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                    <div class="img">
+                                        <img src="../static/img/table-img.png">
+                                    </div>
+                                    <a href="#" class="name">Internet tend</a>
+                                </td>
+                                <td class="description">
+                                    There are many variations of passages.
+                                </td>
+                                <td>
+                                    <ul class="actions">
+                                        <li><a href="#">Edit</a></li>
+                                        <li class="last"><a href="#">Delete</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- row -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                    <div class="img">
+                                        <img src="../static/img/table-img.png">
+                                    </div>
+                                    <a href="#" class="name">Generate Lorem </a>
+                                </td>
+                                <td class="description">
+                                    if you are going to use a passage of Lorem Ipsum.
+                                </td>
+                                <td>
+                                    <ul class="actions">
+                                        <li><a href="#">Edit</a></li>
+                                        <li class="last"><a href="#">Delete</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- row -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                    <div class="img">
+                                        <img src="../static/img/table-img.png">
+                                    </div>
+                                    <a href="#" class="name">Internet tend</a>
+                                </td>
+                                <td class="description">
+                                    There are many variations of passages.
+                                </td>
+                                <td>
+                                    <span class="label label-info">Standby</span>
+                                    <ul class="actions">
+                                        <li><a href="#">Edit</a></li>
+                                        <li class="last"><a href="#">Delete</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                    <div class="img">
+                                        <img src="../static/img/table-img.png">
+                                    </div>
+                                    <a href="#" class="name">Generate Lorem </a>
+                                </td>
+                                <td class="description">
+                                    if you are going to use a passage of Lorem Ipsum.
+                                </td>
+                                <td>
+                                    <span class="label label-success">Active</span>
+                                    <ul class="actions">
+                                        <li><a href="#">Edit</a></li>
+                                        <li class="last"><a href="#">Delete</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- end products table -->
+        </div>
+    </div>
+    <!-- end main container -->
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
+
+    {% endblock %}

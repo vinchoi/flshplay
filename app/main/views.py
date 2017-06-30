@@ -34,6 +34,22 @@ def taddpro():
             print 1
     return render_template('t-addpro.html', form=form)
 
+@main.route('/product-table.html', methods=['GET', 'POST'])
+def taddproduct():
+    form = AddProduct()
+    if form.validate_on_submit():
+        product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
+        if product_name is None:
+            product = Product(pro_name=form.pro_name.data, person=form.person.data)
+            db.session.add(product)
+            db.session.commit()
+            # return redirect(url_for('main.index'))
+
+        else:
+            flash('hava exic')
+            print 1
+    return render_template('product-table.html', form=form)
+
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])
 def taddpack():
     form = AddPackage()
@@ -50,8 +66,6 @@ def taddpack():
 
         else:
             flash('wodemamayayafdpfkjdsjfisdjifosdjofijsdoifjsfjisj')
-            print '$%^&*('
-            flash('wodemamayayafdpfkjdsjfisisj')
 
     return render_template('t-addpackage.html', form=form)
 @main.route('/t-query.html', methods=['GET', 'POST'])
