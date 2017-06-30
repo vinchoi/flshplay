@@ -1,15 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %} {% endblock %}
-<body>
-<div>
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-        </div>
-    {% endfor %}
+
+{% block title %}addpackage{% endblock %}
 
 
 {% block content%}
@@ -25,8 +17,6 @@
 
 {% endblock%}
 
-
-</body>
 
 
 {% block styles %}

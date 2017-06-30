@@ -54,8 +54,8 @@ def taddpack():
             flash('wodemamayayafdpfkjdsjfisisj')
 
     return render_template('t-addpackage.html', form=form)
-
-@main.route('/t-search.html', methods=['GET', 'POST'])
+@main.route('/t-query.html', methods=['GET', 'POST'])
+# @main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
     form = SearchView()
     if form.validate_on_submit():
@@ -65,5 +65,7 @@ def search():
         order_by(Product.pro_name,Product_sub.package).all()
 
         # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
-    return render_template('t-search.html', result=result)
+    # return render_template('t-search.html', result=result)
+    return render_template('t-query.html', result=result)
+
 # trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))
