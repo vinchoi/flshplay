@@ -4,12 +4,12 @@
 {% block title %}  产品管理页 {% endblock %}
 {% block head %}
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
-    <link href="{{url_for('static',filename='css/compiled/datatables.css')}}" rel="stylesheet" type="text/css" media="screen"/>
     {{ super() }}
 {% endblock %}
 
     {% block content %}
-        	<!-- main container -->
+
+     <!-- main container -->
     <div class="content">
 
       <div id="pad-wrapper">
@@ -54,111 +54,34 @@
                             </tr>
                         </thead>
                         <tbody>
+                        {% for pro in result %}
                             <!-- row -->
                             <tr class="first">
                                 <td>
-                                    <input type="checkbox">
-                                    <div class="img">
-                                        <img src="../static/img/table-img.png">
-                                    </div>
-                                    <a href="#" class="name">Generate Lorem </a>
+                                    <input type="checkbox" value="{{ pro.id }}">
+                                    <a href="#" class="name">{{ pro.pro_name }} </a>
                                 </td>
                                 <td class="description">
-                                    if you are going to use a passage of Lorem Ipsum.
-                                </td>
-                                <td>
-                                    <span class="label label-success">Active</span>
-                                    <ul class="actions">
-                                        <li><a href="#">Edit</a></li>
-                                        <li class="last"><a href="#">Delete</a></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <!-- row -->
-                            <tr>
-                                <td>
-                                    <input type="checkbox">
-                                    <div class="img">
-                                        <img src="../static/img/table-img.png">
-                                    </div>
-                                    <a href="#" class="name">Internet tend</a>
-                                </td>
-                                <td class="description">
-                                    There are many variations of passages.
+                                    {{ pro.person }}
                                 </td>
                                 <td>
                                     <ul class="actions">
-                                        <li><a href="#">Edit</a></li>
-                                        <li class="last"><a href="#">Delete</a></li>
+                                        <li><a href="#">修改</a></li>
+                                        <li class="last"><a href="#">删除</a></li>
                                     </ul>
                                 </td>
                             </tr>
-                            <!-- row -->
-                            <tr>
-                                <td>
-                                    <input type="checkbox">
-                                    <div class="img">
-                                        <img src="../static/img/table-img.png">
-                                    </div>
-                                    <a href="#" class="name">Generate Lorem </a>
-                                </td>
-                                <td class="description">
-                                    if you are going to use a passage of Lorem Ipsum.
-                                </td>
-                                <td>
-                                    <ul class="actions">
-                                        <li><a href="#">Edit</a></li>
-                                        <li class="last"><a href="#">Delete</a></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <!-- row -->
-                            <tr>
-                                <td>
-                                    <input type="checkbox">
-                                    <div class="img">
-                                        <img src="../static/img/table-img.png">
-                                    </div>
-                                    <a href="#" class="name">Internet tend</a>
-                                </td>
-                                <td class="description">
-                                    There are many variations of passages.
-                                </td>
-                                <td>
-                                    <span class="label label-info">Standby</span>
-                                    <ul class="actions">
-                                        <li><a href="#">Edit</a></li>
-                                        <li class="last"><a href="#">Delete</a></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox">
-                                    <div class="img">
-                                        <img src="../static/img/table-img.png">
-                                    </div>
-                                    <a href="#" class="name">Generate Lorem </a>
-                                </td>
-                                <td class="description">
-                                    if you are going to use a passage of Lorem Ipsum.
-                                </td>
-                                <td>
-                                    <span class="label label-success">Active</span>
-                                    <ul class="actions">
-                                        <li><a href="#">Edit</a></li>
-                                        <li class="last"><a href="#">Delete</a></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        </tbody>
+                        {% endfor %}
+                          </tbody>
                     </table>
                 </div>
             </div>
             <!-- end products table -->
-        </div>
+       </div>
+
     </div>
     <!-- end main container -->
+
     {% endblock %}
 
     {% block scripts %}
