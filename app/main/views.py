@@ -36,9 +36,18 @@ def taddpro():
 
 @main.route('/product-table.html', methods=['GET', 'POST'])
 def taddproduct():
-
+    form = AddProduct()
+    if form.validate_on_submit():
+        product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
+        if product_name is None:
+            product = Product(pro_name=form.pro_name.data, person=form.person.data)
+            db.session.add(product)
+            db.session.commit()
+            return redirect(url_for('main.taddproduct'))
+        else:
+            flash(u'产品已存在')
     result = Product.query.order_by(Product.create_time)
-    return render_template('product-table.html', result=result)
+    return render_template('product-table.html', result=result, form=form)
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])
 def taddpack():

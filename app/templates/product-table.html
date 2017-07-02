@@ -19,7 +19,7 @@
             <div class="table-wrapper products-table section">
                 <div class="row head">
                     <div class="col-md-12">
-                        <h4>Products</h4>
+                        <h1>产品</h1>
                     </div>
                 </div>
 
@@ -33,7 +33,8 @@
                             </select>
                         </div>
                         <input type="text" class="search">
-                        <a class="btn-flat success new-product">+ Add product</a>
+                        <a data-toggle="modal" href="#myModal" class="btn-flat success new-product">+ 添加产品</a>
+
                     </div>
                 </div>
 
@@ -49,7 +50,7 @@
                                     <span class="line"></span>对接人
                                 </th>
                                 <th class="col-md-3">
-                                    <span class="line"></span>状态
+                                    <span class="line"></span>操作
                                 </th>
                             </tr>
                         </thead>
@@ -81,6 +82,44 @@
 
     </div>
     <!-- end main container -->
+
+      <!-- Modal -->
+     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">添加产品</h4>
+            </div>
+
+              <form class="form-horizontal" role="form" method="post" action="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{form.hidden_tag()}}
+                            {{ form.pro_name.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.pro_name(required='') }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form.person.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.person(required='') }}
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+              </form>
+
+
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     {% endblock %}
 
