@@ -5,6 +5,9 @@ from wtforms import StringField, SubmitField, IntegerField, SelectField, DateTim
 from wtforms.validators import length, DataRequired
 from ..models import Product, Product_sub
 
+class ManagePackageForm(FlaskForm):
+    product = SelectField(u'产品', coerce=int)
+    submit = SubmitField(u'筛选')
 
 class AddProduct(FlaskForm):
     pro_name = StringField(u'产品名称', validators=[DataRequired()])

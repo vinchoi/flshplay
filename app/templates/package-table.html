@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
-{% block title %}  产品管理页 {% endblock %}
+{% block title %}  包包管理页 {% endblock %}
 {% block head %}
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
+
     {{ super() }}
 {% endblock %}
 
@@ -11,29 +14,25 @@
 
      <!-- main container -->
     <div class="content">
-
       <div id="pad-wrapper">
+            <div class="table-wrapper products-table">
 
             <!-- products table-->
             <!-- the script for the toggle all checkboxes from header is located in js/theme.js -->
-            <div class="table-wrapper products-table">
                 <div class="row head">
                     <div class="col-md-12">
-                        <h1>产品</h1>
+                        <h1>产品包</h1>
                     </div>
                 </div>
 
                 <div class="row filter-block">
                     <div class="pull-right">
-                        <div class="ui-select">
-                            <select>
-                              <option>Filter users</option>
-                              <option>Signed last 30 days</option>
-                              <option>Active users</option>
-                            </select>
-                        </div>
-                        <input type="text" class="search">
-                        <a data-toggle="modal" href="#myModal" class="btn-flat success new-product">+ 添加产品</a>
+                        <form method="post" action="">
+                        {{form.hidden_tag()}}
+                        {{ form1.product(class='ui-select') }}
+                        {{ form1.submit(class='btn-flat ') }}
+                        <a data-toggle="modal" href="#myModal" class="btn-flat success">+ 添加产品</a>
+                    </form>
 
                     </div>
                 </div>
@@ -42,28 +41,46 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th class="col-md-3">
+                                <th class="col-md-1">
                                     <input type="checkbox">
-                                    产品名称
+                                    序号
                                 </th>
-                                <th class="col-md-3">
-                                    <span class="line"></span>对接人
+                                <th class="col-md-1">
+                                     <span class="line"></span>产品名称
                                 </th>
-                                <th class="col-md-3">
+                                <th class="col-md-1">
+                                    <span class="line"></span>包号
+                                </th>
+                                 <th class="col-md-1">
+                                    <span class="line"></span>当日数据
+                                </th>
+                                <th class="col-md-1">
+                                    <span class="line"></span>日期
+                                </th>
+                                <th class="col-md-1">
                                     <span class="line"></span>操作
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                        {% for pro in result %}
+                        {% for pack in packages %}
                             <!-- row -->
                             <tr class="first">
                                 <td>
-                                    <input type="checkbox" value="{{ pro.id }}">
-                                    <a href="#" class="name">{{ pro.pro_name }} </a>
+                                    <input type="checkbox" value="{{ pack.id }}">
+                                    <a href="#" class="name">{{ loop.index }} </a>
                                 </td>
                                 <td class="description">
-                                    {{ pro.person }}
+                                    {{ pack.product.pro_name }}
+                                </td>
+                                <td class="description">
+                                    {{ pack.package }}包
+                                </td>
+                                <td class="description">
+                                    {{ pack.data }}
+                                </td>
+                                <td class="description">
+                                    {{ pack.data_Date }}
                                 </td>
                                 <td>
                                     <ul class="actions">
@@ -77,6 +94,9 @@
                     </table>
                 </div>
             </div>
+              <div class="pagination">
+            {{ macros.pagination_widget(pagination, endpoint) }}
+        </div>
             <!-- end products table -->
        </div>
 
@@ -89,7 +109,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title">添加产品</h4>
+              <h4 class="modal-title">添加数据</h4>
             </div>
 
               <form class="form-horizontal" role="form" method="post" action="">
@@ -97,18 +117,33 @@
                     <div class="form-group">
                         <label for="input1" class="col-lg-2 control-label">
                             {{form.hidden_tag()}}
-                            {{ form.pro_name.label }}:</label>
+                            {{ form.pro_id.label }}:</label>
                         <div class="col-lg-10">
-                            {{ form.pro_name(required='') }}
+                            {{ form.pro_id() }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="input1" class="col-lg-2 control-label">
-                            {{ form.person.label }}:</label>
+                            {{ form.package.label }}:</label>
                         <div class="col-lg-10">
-                            {{ form.person(required='') }}
+                            {{ form.package(required='') }}
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form.data.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.data(required='') }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form.data_Date.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.data_Date(class="form_datetime", required='', readonly='') }}
+                        </div>
+                    </div>
+
                 </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -127,5 +162,18 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
+
+    <script  type="text/javascript" src="{{url_for('static',filename='js/jquery-1.8.3.min.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
+    <script type="text/javascript">
+        $(".form_datetime").datetimepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: 1,
+            minView:2
+
+        });
+
+    </script>
 
     {% endblock %}

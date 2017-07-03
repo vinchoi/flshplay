@@ -1,8 +1,8 @@
 #coding:utf-8
 
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, flash
-from .forms import AddProduct, AddPackage, SearchView
+from flask import render_template, session, redirect, url_for, flash, request
+from .forms import AddProduct, AddPackage, SearchView, ManagePackageForm
 
 from . import main
 from .. import db
@@ -31,7 +31,6 @@ def taddpro():
 
         else:
             flash('hava exic')
-            print 1
     return render_template('t-addpro.html', form=form)
 
 @main.route('/product-table.html', methods=['GET', 'POST'])
@@ -48,6 +47,65 @@ def taddproduct():
             flash(u'产品已存在')
     result = Product.query.order_by(Product.create_time)
     return render_template('product-table.html', result=result, form=form)
+
+@main.route('/package-table.html', methods=['GET', 'POST'])
+def packagetable():
+    form =AddPackage()
+    form1 = ManagePackageForm()
+
+    products = [(pro.id, pro.pro_name) for pro in Product.query.all()]
+    products.append((-1, u'全部产品'))
+    form1.product.choices = products
+
+    pagination_search = 0
+
+    if form1.validate_on_submit():
+        product_id = form1.product.data
+        page = 1
+    else:
+        product_id = request.args.get('product_id', -1, type=int)
+        form1.product.data = product_id
+        page = request.args.get('page', 1, type=int)
+
+    result = Product_sub.query.order_by(Product_sub.product_id,Product_sub.package)
+
+    if product_id != -1:
+        product = Product.query.get_or_404(product_id)
+        result = result.filter_by(product=product)
+    #  制作分页的
+        pagination_search = result.paginate(
+            page, per_page=10, error_out=False)
+
+    if pagination_search != 0:
+        pagination = pagination_search
+        packages = pagination_search.items
+
+    else:
+        page = request.args.get('page', 1, type=int)
+        pagination = Product_sub.query.order_by(Product_sub.product_id,Product_sub.package).paginate(
+                page, per_page=10, error_out=False)
+        packages = pagination.items
+
+    if form.validate_on_submit():
+
+        package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
+                                                    data_Date=form.data_Date.data).first()
+        if package_exist is None:
+            product = Product.query.filter_by(id=form.pro_id.data).first()
+            package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
+                                  last_time=datetime.now(), data=form.data.data)
+            db.session.add(package)
+            db.session.commit()
+            return redirect(url_for('main.packagetable'))
+
+        else:
+            flash(u'该产品包号已存当天的数据噜')
+    return render_template('package-table.html', packages=packages, pagination=pagination,
+                           form=form, form1=form1, product_id=product_id, page=page, endpoint='main.packagetable')
+
+
+
+
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])
 def taddpack():
