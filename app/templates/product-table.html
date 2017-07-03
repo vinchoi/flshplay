@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}  产品管理页 {% endblock %}
 {% block head %}
@@ -55,7 +56,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for pro in result %}
+                        {% for pro in products %}
                             <!-- row -->
                             <tr class="first">
                                 <td>
@@ -76,6 +77,8 @@
                           </tbody>
                     </table>
                 </div>
+                {{ macros.pagination_widget(pagination, endpoint) }}
+
             </div>
             <!-- end products table -->
        </div>

@@ -36,6 +36,8 @@ def taddpro():
 @main.route('/product-table.html', methods=['GET', 'POST'])
 def taddproduct():
     form = AddProduct()
+    pagination_search = 0
+
     if form.validate_on_submit():
         product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
         if product_name is None:
@@ -45,8 +47,23 @@ def taddproduct():
             return redirect(url_for('main.taddproduct'))
         else:
             flash(u'产品已存在')
+
     result = Product.query.order_by(Product.create_time)
-    return render_template('product-table.html', result=result, form=form)
+
+        # pagination_search = result.paginate(
+        #     page, per_page=10, error_out=False)
+
+    if pagination_search != 0:
+        pagination = pagination_search
+        products = pagination_search.items
+
+    else:
+        page = request.args.get('page', 1, type=int)
+        pagination = Product.query.order_by(Product.create_time).paginate(page, per_page=10, error_out=False)
+        products = pagination.items
+
+    return render_template('product-table.html', form=form, pagination=pagination,
+                           page=page, endpoint='main.taddproduct', products=products)
 
 @main.route('/package-table.html', methods=['GET', 'POST'])
 def packagetable():
@@ -102,9 +119,6 @@ def packagetable():
             flash(u'该产品包号已存当天的数据噜')
     return render_template('package-table.html', packages=packages, pagination=pagination,
                            form=form, form1=form1, product_id=product_id, page=page, endpoint='main.packagetable')
-
-
-
 
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])
