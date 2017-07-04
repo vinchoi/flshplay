@@ -27,9 +27,7 @@ class AddPackage(FlaskForm):
         self.pro_id.choices = [(pro.id, pro.pro_name) for pro in Product.query.all()]
 
 
-class SearchView(FlaskForm):
-    pro_name = TextAreaField()
-    person = TextAreaField()
-    package = TextAreaField()
-    last_time = TextAreaField()
+class SearchForm(FlaskForm):
+    begin_time =DateField(u'开始时间:')
+    end_time =DateField(u'结束时间:')
     submit = SubmitField(u'搜索')

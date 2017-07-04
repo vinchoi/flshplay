@@ -5,6 +5,17 @@
 {% block head %}
     <link href="{{url_for('static',filename='css/lib/jquery.dataTables.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url_for('static',filename='css/compiled/datatables.css')}}" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+    #form1 {
+      display: flex;
+      float: right;
+    }
+
+    #form1 input {
+        height: 30px !important;
+    }
+    </style>
     {{ super() }}
 {% endblock %}
 
@@ -13,6 +24,19 @@
     <div class="content">
 
         <div id="pad-wrapper" class="datatables-page">
+
+
+
+             <div class="row">
+                    <div class="col-md-12">
+                        <form id="form1" class="clearfix" action="" method="post" >
+
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.begin_time,class="form_datetime") }} &nbsp;&nbsp;&nbsp; {{ wtf.form_field(form.end_time,class="form_datetime") }}
+                        {{ wtf.form_field(form.submit) }}
+                        </form>
+                    </div>
+                </div>
 
             <div class="row">
                 <div class="col-md-12">
@@ -61,12 +85,22 @@
     <script  type="text/javascript" src="{{url_for('static',filename='js/jquery.dataTables.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
 
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#example').dataTable({
                 "sPaginationType": "full_numbers"
             });
         });
+    </script>
+
+    <script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        minView:2
+    });
     </script>
 
     {% endblock %}

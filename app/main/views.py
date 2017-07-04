@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, flash, request
-from .forms import AddProduct, AddPackage, SearchView, ManagePackageForm
+from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm
 
 from . import main
 from .. import db
@@ -142,15 +142,19 @@ def taddpack():
 @main.route('/t-query.html', methods=['GET', 'POST'])
 # @main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
-    form = SearchView()
+    form = SearchForm()
     if form.validate_on_submit():
-        pass
+        begin_date = form.begin_time.data
+        end_date = form.end_time.data
+        result =Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+            order_by(Product.pro_name,Product_sub.package).filter(Product_sub.data_Date.between(begin_date,end_date))
+    else:
     # sql=Product_sub.query.outerjoin(Product).filter()
-    result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-        order_by(Product.pro_name,Product_sub.package).all()
+        result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+            order_by(Product.pro_name,Product_sub.package).all()
 
         # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
     # return render_template('t-search.html', result=result)
-    return render_template('t-query.html', result=result)
+    return render_template('t-query.html', result=result, form=form)
 
 # trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))
