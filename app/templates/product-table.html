@@ -45,7 +45,11 @@
                             <tr>
                                 <th class="col-md-3">
                                     <input type="checkbox">
-                                    产品名称
+                                    序号
+                                </th>
+
+                                <th class="col-md-3">
+                                    <span class="line"></span>产品名称
                                 </th>
                                 <th class="col-md-3">
                                     <span class="line"></span>对接人
@@ -61,8 +65,13 @@
                             <tr class="first">
                                 <td>
                                     <input type="checkbox" value="{{ pro.id }}">
-                                    <a href="#" class="name">{{ pro.pro_name }} </a>
+                                    <a href="#" class="name">{{ loop.index }} </a>
                                 </td>
+
+                                <td class="description">
+                                    {{ pro.pro_name }}
+                                </td>
+
                                 <td class="description">
                                     {{ pro.person }}
                                 </td>

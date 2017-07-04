@@ -14,6 +14,9 @@ class AddProduct(FlaskForm):
     person = StringField(u'对接人', validators=[DataRequired()])
     submit = SubmitField(u'保存')
 
+class DeleteProductForm(FlaskForm):
+    productId = StringField(validators=[DataRequired])
+
 
 class AddPackage(FlaskForm):
     pro_id = SelectField(u'产品', coerce=int)

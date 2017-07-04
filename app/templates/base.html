@@ -85,7 +85,7 @@
                     <div class="arrow"></div>
                     <div class="arrow_border"></div>
                 </div>
-                <a href="index.html">
+                <a href="{{ url_for('main.index') }}">
                     <i class="icon-home"></i>
                     <span>首页</span>
                 </a>
@@ -97,9 +97,9 @@
                     <i class="icon-chevron-down"></i>
                 </a>
                 <ul class="submenu">
-                    <li><a href="product-table.html">产品管理</a></li>
-                    <li><a href="package-table.html">产品包管理</a></li>
-                    <li><a href="t-query.html">产品查看</a></li>
+                    <li><a href="{{ url_for('main.taddproduct') }}">产品管理</a></li>
+                    <li><a href="{{ url_for('main.packagetable') }}">产品包管理</a></li>
+                    <li><a href="{{ url_for('main.search') }}">产品查看</a></li>
 
                 </ul>
             </li>

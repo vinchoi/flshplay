@@ -2,14 +2,14 @@
 
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, flash, request
-from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm
+from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm
 
 from . import main
 from .. import db
 from ..models import Product_sub, Product
 
 @main.route('/')
-@main.route('/index.html', methods=['GET', 'POST'])
+@main.route('/index', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
@@ -33,13 +33,13 @@ def taddpro():
             flash('hava exic')
     return render_template('t-addpro.html', form=form)
 
-@main.route('/product-table.html', methods=['GET', 'POST'])
+@main.route('/product-table', methods=['GET', 'POST'])
 def taddproduct():
     form = AddProduct()
-    pagination_search = 0
 
     if form.validate_on_submit():
         product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
+        page = 1
         if product_name is None:
             product = Product(pro_name=form.pro_name.data, person=form.person.data)
             db.session.add(product)
@@ -47,25 +47,51 @@ def taddproduct():
             return redirect(url_for('main.taddproduct'))
         else:
             flash(u'产品已存在')
+    else:
+        page = request.args.get('page', 1, type=int)
 
     result = Product.query.order_by(Product.create_time)
 
-        # pagination_search = result.paginate(
-        #     page, per_page=10, error_out=False)
+    pagination_search = result.paginate(page, per_page=10, error_out=False)
 
-    if pagination_search != 0:
-        pagination = pagination_search
-        products = pagination_search.items
+    # if pagination_search != 0:
+    pagination = pagination_search
+    products = pagination_search.items
 
-    else:
-        page = request.args.get('page', 1, type=int)
-        pagination = Product.query.order_by(Product.create_time).paginate(page, per_page=10, error_out=False)
-        products = pagination.items
+    # else:
+    #     page = request.args.get('page', 1, type=int)
+    #     pagination = Product.query.order_by(Product.create_time).paginate(page, per_page=10, error_out=False)
+    #     products = pagination.items
 
     return render_template('product-table.html', form=form, pagination=pagination,
                            page=page, endpoint='main.taddproduct', products=products)
 
-@main.route('/package-table.html', methods=['GET', 'POST'])
+
+@main.route('/product-table/delete-product', methods=['GET', 'POST'])
+def delete_product():
+    form = DeleteProductForm
+    if form.validate_on_submit():
+        product_id = int(form.productId.data)
+        product = Product.query.get_or_404(product_id)
+
+        '''delete'''
+        db.session.delete(product)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash(u'删除失败')
+        else:
+            flash(u'删除成功')
+    if form.errors:
+        flash(u'删除失败')
+
+    return redirect('main.taddproduct')
+
+
+
+
+@main.route('/package-table', methods=['GET', 'POST'])
 def packagetable():
     form =AddPackage()
     form1 = ManagePackageForm()
@@ -139,7 +165,7 @@ def taddpack():
             flash('wodemamayayafdpfkjdsjfisdjifosdjofijsdoifjsfjisj')
 
     return render_template('t-addpackage.html', form=form)
-@main.route('/t-query.html', methods=['GET', 'POST'])
+@main.route('/t-query', methods=['GET', 'POST'])
 # @main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
     form = SearchForm()
