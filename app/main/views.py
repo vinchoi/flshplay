@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, flash, request
-from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm
+from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm, DeletePackageForm
 
 from . import main
 from .. import db
@@ -36,6 +36,7 @@ def taddpro():
 @main.route('/product-table', methods=['GET', 'POST'])
 def taddproduct():
     form = AddProduct()
+    form1 = DeleteProductForm()
 
     if form.validate_on_submit():
         product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
@@ -63,16 +64,20 @@ def taddproduct():
     #     pagination = Product.query.order_by(Product.create_time).paginate(page, per_page=10, error_out=False)
     #     products = pagination.items
 
-    return render_template('product-table.html', form=form, pagination=pagination,
+    return render_template('product-table.html', form=form, form1=form1, pagination=pagination,
                            page=page, endpoint='main.taddproduct', products=products)
 
 
 @main.route('/product-table/delete-product', methods=['GET', 'POST'])
 def delete_product():
-    form = DeleteProductForm
+    form = DeleteProductForm()
+
     if form.validate_on_submit():
         product_id = int(form.productId.data)
         product = Product.query.get_or_404(product_id)
+        count = product.product_sub.count()
+        for package in product.product_sub:
+            db.session.delete(package)
 
         '''delete'''
         db.session.delete(product)
@@ -82,11 +87,11 @@ def delete_product():
             db.session.rollback()
             flash(u'删除失败')
         else:
-            flash(u'删除成功')
+            flash(u'已删除该产品和%s条数据' % count)
     if form.errors:
         flash(u'删除失败')
 
-    return redirect('main.taddproduct')
+    return redirect(url_for('main.taddproduct'))
 
 
 
@@ -95,6 +100,7 @@ def delete_product():
 def packagetable():
     form =AddPackage()
     form1 = ManagePackageForm()
+    form2 = DeletePackageForm()
 
     products = [(pro.id, pro.pro_name) for pro in Product.query.all()]
     products.append((-1, u'全部产品'))
@@ -144,7 +150,33 @@ def packagetable():
         else:
             flash(u'该产品包号已存当天的数据噜')
     return render_template('package-table.html', packages=packages, pagination=pagination,
-                           form=form, form1=form1, product_id=product_id, page=page, endpoint='main.packagetable')
+                           form=form, form1=form1, form2=form2, product_id=product_id, page=page, endpoint='main.packagetable')
+
+
+@main.route('/package-table/delete-package', methods=['GET', 'POST'])
+def delete_package():
+    form = DeletePackageForm()
+
+    if form.validate_on_submit():
+        package_id = int(form.packageId.data)
+        package = Product_sub.query.get_or_404(package_id)
+
+        '''delete'''
+        db.session.delete(package)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash(u'删除失败')
+        else:
+            flash(u'删除成功')
+    if form.errors:
+        flash(u'删除失败')
+
+    return redirect(url_for('main.packagetable'))
+
+
+
 
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])

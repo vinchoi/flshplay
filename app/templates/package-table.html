@@ -6,7 +6,12 @@
 {% block head %}
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
-
+    <style type="text/css">
+    .df {
+      display:flex;
+      float: right;
+    }
+    </style>
     {{ super() }}
 {% endblock %}
 
@@ -63,29 +68,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for pack in packages %}
+                        {% for package in packages %}
                             <!-- row -->
                             <tr class="first">
                                 <td>
-                                    <input type="checkbox" value="{{ pack.id }}">
-                                    <a href="#" class="name">{{ loop.index }} </a>
+                                    <input type="checkbox" value="{{ package.id }}">
+                                    <a class="name">{{ loop.index }} </a>
                                 </td>
                                 <td class="description">
-                                    {{ pack.product.pro_name }}
+                                    {{ package.product.pro_name }}
                                 </td>
                                 <td class="description">
-                                    {{ pack.package }}包
+                                    {{ package.package }}包
                                 </td>
                                 <td class="description">
-                                    {{ pack.data }}
+                                    {{ package.data }}
                                 </td>
                                 <td class="description">
-                                    {{ pack.data_Date }}
+                                    {{ package.data_Date }}
                                 </td>
                                 <td>
                                     <ul class="actions">
                                         <li><a href="#">修改</a></li>
-                                        <li class="last"><a href="#">删除</a></li>
+                                            <form class="df" id="delForm{{ package.id }}" method="post" action="{{ url_for('main.delete_package') }}">
+                                                {{ form2.hidden_tag() }}
+                                                {{form2.packageId(type='hidden',value=package.id)  }}
+                                                <a onclick="delCfm({{ package.id }}) ">删除</a>
+                                            </form>
                                     </ul>
                                 </td>
                             </tr>
@@ -102,6 +111,27 @@
 
     </div>
     <!-- end main container -->
+
+        <!-- 信息删除确认: For delete an article confirm -->
+    <div class="modal fade" id="delCfmModel">
+        <div class="modal-dialog">
+            <div class="modal-content message_align">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">确认删除？</h4>
+                </div>
+                <div class="modal-body">
+                    <p>将删除数据，并且删除后不可恢复，您确认要删除吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a onclick="" id="cfmClick" class="btn btn-success" data-dismiss="modal">确定</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 
       <!-- Modal -->
      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -163,7 +193,7 @@
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
 
-    <script  type="text/javascript" src="{{url_for('static',filename='js/jquery-1.8.3.min.js')}}"></script>
+{#    <script  type="text/javascript" src="{{url_for('static',filename='js/jquery-1.8.3.min.js')}}"></script>#}
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
     <script type="text/javascript">
@@ -175,5 +205,16 @@
         });
 
     </script>
-
+    <script type="text/javascript">
+     //JS For submit article id to delete article
+    function delCfm(packageid) {
+        $('#cfmClick').click(function () {
+            formSubmit(packageid);
+        });
+        $('#delCfmModel').modal();
+    }
+    function formSubmit(packageid) {
+        $('#delForm' + packageid).submit();
+    }
+    </script>
     {% endblock %}

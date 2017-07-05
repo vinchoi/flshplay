@@ -5,6 +5,12 @@
 {% block title %}  产品管理页 {% endblock %}
 {% block head %}
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+    .df {
+      display:flex;
+      float: right;
+    }
+    </style>
     {{ super() }}
 {% endblock %}
 
@@ -65,7 +71,7 @@
                             <tr class="first">
                                 <td>
                                     <input type="checkbox" value="{{ pro.id }}">
-                                    <a href="#" class="name">{{ loop.index }} </a>
+                                    <a class="name">{{ loop.index }} </a>
                                 </td>
 
                                 <td class="description">
@@ -78,7 +84,13 @@
                                 <td>
                                     <ul class="actions">
                                         <li><a href="#">修改</a></li>
-                                        <li class="last"><a href="#">删除</a></li>
+                                        <li class="last">
+                                            <form class="df" id="delForm{{ pro.id }}" method="post" action="{{ url_for('main.delete_product') }}">
+                                                {{ form1.hidden_tag() }}
+                                                {{form1.productId(type='hidden',value=pro.id)  }}
+                                             <a onclick="delCfm({{ pro.id }}) ">删除</a>
+                                            </form>
+                                        </li>
                                     </ul>
                                 </td>
                             </tr>
@@ -94,6 +106,29 @@
 
     </div>
     <!-- end main container -->
+
+        <!-- 信息删除确认: For delete an article confirm -->
+    <div class="modal fade" id="delCfmModel">
+        <div class="modal-dialog">
+            <div class="modal-content message_align">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">确认删除？</h4>
+                </div>
+                <div class="modal-body">
+                    <p>将连同该产品数据一齐删除，并且删除后不可恢复，您确认要删除吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a onclick="" id="cfmClick" class="btn btn-success" data-dismiss="modal">确定</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
 
       <!-- Modal -->
      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -139,5 +174,17 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/theme.js')}}"></script>
+    <script type="text/javascript">
+     //JS For submit article id to delete article
+    function delCfm(productid) {
+        $('#cfmClick').click(function () {
+            formSubmit(productid);
+        });
+        $('#delCfmModel').modal();
+    }
+    function formSubmit(productid) {
+        $('#delForm' + productid).submit();
+    }
+    </script>
 
     {% endblock %}
