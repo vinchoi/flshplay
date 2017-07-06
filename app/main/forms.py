@@ -14,6 +14,9 @@ class AddProduct(FlaskForm):
     person = StringField(u'对接人', validators=[DataRequired()])
     submit = SubmitField(u'保存')
 
+class EditProduct(AddProduct):
+    product_id = StringField(validators=[DataRequired()])
+
 class DeleteProductForm(FlaskForm):
     productId = StringField(validators=[DataRequired()])
 
@@ -28,6 +31,10 @@ class AddPackage(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(AddPackage, self).__init__(*args, **kwargs)
         self.pro_id.choices = [(pro.id, pro.pro_name) for pro in Product.query.all()]
+
+
+class EditPackage(AddPackage):
+    package_id = StringField(validators=[DataRequired()])
 
 
 class DeletePackageForm(FlaskForm):

@@ -32,14 +32,14 @@
 
                 <div class="row filter-block">
                     <div class="pull-right">
-                        <div class="ui-select">
-                            <select>
-                              <option>Filter users</option>
-                              <option>Signed last 30 days</option>
-                              <option>Active users</option>
-                            </select>
-                        </div>
-                        <input type="text" class="search">
+{#                        <div class="ui-select">#}
+{#                            <select>#}
+{#                              <option>Filter users</option>#}
+{#                              <option>Signed last 30 days</option>#}
+{#                              <option>Active users</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <input type="text" class="search">#}
                         <a data-toggle="modal" href="#myModal" class="btn-flat success new-product">+ 添加产品</a>
 
                     </div>
@@ -50,7 +50,7 @@
                         <thead>
                             <tr>
                                 <th class="col-md-3">
-                                    <input type="checkbox">
+{#                                    <input type="checkbox">#}
                                     序号
                                 </th>
 
@@ -70,7 +70,7 @@
                             <!-- row -->
                             <tr class="first">
                                 <td>
-                                    <input type="checkbox" value="{{ pro.id }}">
+{#                                    <input type="checkbox" value="{{ pro.id }}">#}
                                     <a class="name">{{ loop.index }} </a>
                                 </td>
 
@@ -83,7 +83,10 @@
                                 </td>
                                 <td>
                                     <ul class="actions">
-                                        <li><a href="#">修改</a></li>
+
+                                        <li><a data-toggle="modal" href="#myModal1" >修改</a></li>
+
+
                                         <li class="last">
                                             <form class="df" id="delForm{{ pro.id }}" method="post" action="{{ url_for('main.delete_product') }}">
                                                 {{ form1.hidden_tag() }}
@@ -168,6 +171,41 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+      <!-- 编辑 -->
+     <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">编辑产品</h4>
+            </div>
+
+              <form class="form-horizontal" role="form" method="post" action="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{form.hidden_tag()}}
+                            {{ form.pro_name.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.pro_name(required='',value= }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form.person.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form.person(required='') }}
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+              </form>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     {% endblock %}
 
     {% block scripts %}

@@ -2,7 +2,8 @@
 
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, flash, request
-from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm, DeletePackageForm
+from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm,\
+    DeletePackageForm, EditProduct, EditPackage
 
 from . import main
 from .. import db
@@ -37,6 +38,7 @@ def taddpro():
 def taddproduct():
     form = AddProduct()
     form1 = DeleteProductForm()
+    form2 = EditProduct()
 
     if form.validate_on_submit():
         product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
@@ -51,20 +53,17 @@ def taddproduct():
     else:
         page = request.args.get('page', 1, type=int)
 
+    if form2.validate_on_submit():
+        pass
+
     result = Product.query.order_by(Product.create_time)
 
     pagination_search = result.paginate(page, per_page=10, error_out=False)
 
-    # if pagination_search != 0:
     pagination = pagination_search
     products = pagination_search.items
 
-    # else:
-    #     page = request.args.get('page', 1, type=int)
-    #     pagination = Product.query.order_by(Product.create_time).paginate(page, per_page=10, error_out=False)
-    #     products = pagination.items
-
-    return render_template('product-table.html', form=form, form1=form1, pagination=pagination,
+    return render_template('product-table.html', form=form, form1=form1, form2=form2, pagination=pagination,
                            page=page, endpoint='main.taddproduct', products=products)
 
 
