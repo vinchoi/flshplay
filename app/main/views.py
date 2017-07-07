@@ -1,7 +1,7 @@
 #coding:utf-8
 
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, flash, request
+from flask import render_template, session, redirect, url_for, flash, request, jsonify
 from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm,\
     DeletePackageForm, EditProduct, EditPackage
 
@@ -65,6 +65,31 @@ def taddproduct():
 
     return render_template('product-table.html', form=form, form1=form1, form2=form2, pagination=pagination,
                            page=page, endpoint='main.taddproduct', products=products)
+
+@main.route('/product-table/get-product-info/<int:id>')
+def get_product_info(id):
+        if request.is_xhr:
+            product = Product.query.get_or_404(id)
+            return jsonify({
+                'pro_name': product.pro_name,
+                'person': product.person
+
+            })
+
+@main.route('/product-table/edit-product', methods=['POST'])
+def edit_product():
+    form2 = EditProduct()
+    page = request.args.get('page', 1, type=int)
+    if form2.validate_on_submit():
+        product_id = int(form2.product_id.data)
+        pro_name = form2.pro_name.data
+        person = form2.person.data
+        return redirect(url_for('.product-table'))
+
+    if form2.errors:
+        flash(u'修改失败')
+        return redirect(url_for('.product-table'))
+
 
 
 @main.route('/product-table/delete-product', methods=['GET', 'POST'])
