@@ -32,16 +32,7 @@
 
                 <div class="row filter-block">
                     <div class="pull-right">
-{#                        <div class="ui-select">#}
-{#                            <select>#}
-{#                              <option>Filter users</option>#}
-{#                              <option>Signed last 30 days</option>#}
-{#                              <option>Active users</option>#}
-{#                            </select>#}
-{#                        </div>#}
-{#                        <input type="text" class="search">#}
                         <a data-toggle="modal" href="#myModal" class="btn-flat success new-product">+ 添加产品</a>
-
                     </div>
                 </div>
 
@@ -70,7 +61,6 @@
                             <!-- row -->
                             <tr class="first">
                                 <td>
-{#                                    <input type="checkbox" value="{{ pro.id }}">#}
                                     <a class="name">{{ loop.index }} </a>
                                 </td>
 
@@ -83,8 +73,8 @@
                                 </td>
                                 <td>
                                     <ul class="actions">
-
-                                        <li><a onclick="get_product_info('{{ url_for('main.get_product_info',id=pro.id) }},{{ pro.id }}')">修改</a></li>
+                                        <li><a onclick="get_product_info('{{ url_for('main.get_product_info',id=pro.id) }}',{{ pro.id }})">修改</a></li>
+                                        <!-- 删除-->
                                         <li class="last">
                                             <form class="df" id="delForm{{ pro.id }}" method="post" action="{{ url_for('main.delete_product') }}">
                                                 {{ form1.hidden_tag() }}
@@ -128,7 +118,7 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-        <!-- Modal -->
+        <!-- 添加产品 -->
      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -160,40 +150,41 @@
               <button type="submit" class="btn btn-primary">保存</button>
             </div>
               </form>
-
-
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
         <!-- edit-->
-        <div class="modal fade" id="editArticleTypeFormModel">
-    <div class="modal-dialog">
-        <div class="modal-content message_align">
+    <div class="modal fade" id="editProductModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="ModalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">修改产品</h4>
             </div>
-            <form id="editArticleTypeForm" method="post"
-                  action="{{ url_for('main.edit_product', page=page) }}">
+            <form class="form-horizontal" id="EditProduct" role="form" method="post" action="{{ url_for('main.edit_product', page=page) }}">
                 <div class="modal-body">
-                        <div class="form-group">
-                            {{ form2.csrf_token }}
-                            {{ form2.articleType_id(type='hidden') }}
-                            {{ form2.name.label }}
-                            {{ form2.name(id='editName', class='form-control', required='') }}
-                            {{ form2.setting_hide.label }}
-                            {{ form2.setting_hide(id='editSetting_hide', class='form-control', required='') }}
-                            {{ form2.introduction.label }}（可选）
-                            {{ form2.introduction(id='editIntroduction', class='form-control') }}
-                            {{ form2.menus.label }}
-                            {{ form2.menus(id='editMenus', class='form-control', required='') }}
+                    <div class="form-group">
+                        {{ form2.hidden_tag() }}
+                        {{ form2.product_id(type='hidden') }}
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form2.pro_name.label }}:
+                        </label>
+                        <div class="col-lg-10">
+                            {{ form2.pro_name(id='editName',required='') }}
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input1" class="col-lg-2 control-label">
+                            {{ form2.person.label }}:</label>
+                        <div class="col-lg-10">
+                            {{ form2.person(id='editPerson',required='') }}
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button id="editArticlyTypeCfmClick" type="submit" class="btn btn-success">确定</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->
@@ -226,23 +217,13 @@
 
     <script type="text/javascript">
 
-        function get_articleType_info(url, id) {
-            $.getJSON(url, function(data) {
-                $('#editName').val(data.name);
-                $('#editSetting_hide').val(data.setting_hide);
-                $('#editIntroduction').val(data.introduction);
-                $('#editMenus').val(data.menu);
-                $('#articleType_id').val(id);
-                $('#ModalTitle').text('修改博文分类：' + data.name);
-                if (data.name == '未分类') {
-                    $('#editName').prop('readonly', true);
-                    $('#editIntroduction').prop('readonly', true);
-                } else {
-                    $('#editName').prop('readonly', false);
-                    $('#editIntroduction').prop('readonly', false);
-                }
-                $('#editArticleTypeFormModel').modal();
-            });
-        }
+    function get_product_info(url, id) {
+        $.getJSON(url, function(data) {
+            $('#editName').val(data.pro_name);
+            $('#editPerson').val(data.person);
+            $('#product_id').val(id);
+            $('#editProductModel').modal();
+        });
+    }
         </script>
     {% endblock %}

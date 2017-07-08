@@ -53,9 +53,6 @@ def taddproduct():
     else:
         page = request.args.get('page', 1, type=int)
 
-    if form2.validate_on_submit():
-        pass
-
     result = Product.query.order_by(Product.create_time)
 
     pagination_search = result.paginate(page, per_page=10, error_out=False)
@@ -68,13 +65,12 @@ def taddproduct():
 
 @main.route('/product-table/get-product-info/<int:id>')
 def get_product_info(id):
-        if request.is_xhr:
-            product = Product.query.get_or_404(id)
-            return jsonify({
-                'pro_name': product.pro_name,
-                'person': product.person
-
-            })
+    if request.is_xhr:
+        product = Product.query.get_or_404(id)
+        return jsonify({
+            'pro_name': product.pro_name,
+            'person': product.person
+        })
 
 @main.route('/product-table/edit-product', methods=['POST'])
 def edit_product():
@@ -82,15 +78,25 @@ def edit_product():
     page = request.args.get('page', 1, type=int)
     if form2.validate_on_submit():
         product_id = int(form2.product_id.data)
-        pro_name = form2.pro_name.data
-        person = form2.person.data
-        return redirect(url_for('.product-table'))
 
+        if Product.query.filter_by(pro_name=form2.pro_name.data).first() is None \
+                and Product.query.filter_by(pro_name=form2.pro_name.data).first().id == product_id:
+
+            pro_name = form2.pro_name.data
+            person = form2.person.data
+            product = Product.query.get_or_404(product_id)
+            product.pro_name = pro_name
+            product.person = person
+
+            db.session.add(product)
+            db.session.commit()
+            flash(u'修改成功')
+            return redirect(url_for('main.taddproduct', page=page))
+        else:
+            flash(u'已存在该产品')
     if form2.errors:
         flash(u'修改失败')
-        return redirect(url_for('.product-table'))
-
-
+    return redirect(url_for('main.taddproduct',page=page))
 
 @main.route('/product-table/delete-product', methods=['GET', 'POST'])
 def delete_product():
@@ -122,7 +128,7 @@ def delete_product():
 
 @main.route('/package-table', methods=['GET', 'POST'])
 def packagetable():
-    form =AddPackage()
+    form = AddPackage()
     form1 = ManagePackageForm()
     form2 = DeletePackageForm()
 
