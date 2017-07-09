@@ -79,9 +79,12 @@ def edit_product():
     if form2.validate_on_submit():
         product_id = int(form2.product_id.data)
 
-        if Product.query.filter_by(pro_name=form2.pro_name.data).first() is None \
-                and Product.query.filter_by(pro_name=form2.pro_name.data).first().id == product_id:
+        if Product.query.filter_by(pro_name=form2.pro_name.data).first() \
+                and Product.query.filter_by(pro_name=form2.pro_name.data).first().id != product_id:
 
+            flash(u'已存在该产品')
+
+        else:
             pro_name = form2.pro_name.data
             person = form2.person.data
             product = Product.query.get_or_404(product_id)
@@ -92,8 +95,6 @@ def edit_product():
             db.session.commit()
             flash(u'修改成功')
             return redirect(url_for('main.taddproduct', page=page))
-        else:
-            flash(u'已存在该产品')
     if form2.errors:
         flash(u'修改失败')
     return redirect(url_for('main.taddproduct',page=page))
@@ -122,8 +123,6 @@ def delete_product():
         flash(u'删除失败')
 
     return redirect(url_for('main.taddproduct'))
-
-
 
 
 @main.route('/package-table', methods=['GET', 'POST'])
@@ -204,9 +203,6 @@ def delete_package():
         flash(u'删除失败')
 
     return redirect(url_for('main.packagetable'))
-
-
-
 
 
 @main.route('/t-addpackage.html', methods=['GET', 'POST'])

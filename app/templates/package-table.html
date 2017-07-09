@@ -93,7 +93,7 @@
                                             <form class="df" id="delForm{{ package.id }}" method="post" action="{{ url_for('main.delete_package') }}">
                                                 {{ form2.hidden_tag() }}
                                                 {{form2.packageId(type='hidden',value=package.id)  }}
-                                                <a onclick="delCfm({{ package.id }}) ">删除</a>
+                                                <a onclick="delPack({{ package.id }}) ">删除</a>
                                             </form>
                                     </ul>
                                 </td>
@@ -113,7 +113,7 @@
     <!-- end main container -->
 
         <!-- 信息删除确认: For delete an article confirm -->
-    <div class="modal fade" id="delCfmModel">
+    <div class="modal fade" id="delPackModel">
         <div class="modal-dialog">
             <div class="modal-content message_align">
                 <div class="modal-header">
@@ -126,7 +126,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <a onclick="" id="cfmClick" class="btn btn-success" data-dismiss="modal">确定</a>
+                    <a onclick="" id="packClick" class="btn btn-success" data-dismiss="modal">确定</a>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -196,6 +196,8 @@
 {#    <script  type="text/javascript" src="{{url_for('static',filename='js/jquery-1.8.3.min.js')}}"></script>#}
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.js')}}"></script>
     <script  type="text/javascript" src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js')}}"></script>
+    <script  type="text/javascript" src="{{url_for('static',filename='js/admin.js')}}"></script>
+
     <script type="text/javascript">
         $(".form_datetime").datetimepicker({
             format: 'yyyy-mm-dd',
@@ -204,17 +206,5 @@
 
         });
 
-    </script>
-    <script type="text/javascript">
-     //JS For submit article id to delete article
-    function delCfm(packageid) {
-        $('#cfmClick').click(function () {
-            formSubmit(packageid);
-        });
-        $('#delCfmModel').modal();
-    }
-    function formSubmit(packageid) {
-        $('#delForm' + packageid).submit();
-    }
     </script>
     {% endblock %}
