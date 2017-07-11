@@ -35,6 +35,7 @@ class AddPackage(FlaskForm):
 
 class EditPackage(AddPackage):
     package_id = StringField(validators=[DataRequired()])
+    productname = StringField(u'产品')
 
 
 class DeletePackageForm(FlaskForm):

@@ -14,28 +14,23 @@ from ..models import Product_sub, Product
 def index():
     return render_template('index.html')
 
-
-@main.route('/new-user.html', methods=['GET', 'POST'])
-def personal_info():
-    return render_template('new-user.html')
-
-@main.route('/t-addpro.html', methods=['GET', 'POST'])
-def taddpro():
-    form = AddProduct()
-    if form.validate_on_submit():
-        product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
-        if product_name is None:
-            product = Product(pro_name=form.pro_name.data, person=form.person.data)
-            db.session.add(product)
-            db.session.commit()
-            # return redirect(url_for('main.index'))
-
-        else:
-            flash('hava exic')
-    return render_template('t-addpro.html', form=form)
+# @main.route('/t-addpro.html', methods=['GET', 'POST'])
+# def taddpro():
+#     form = AddProduct()
+#     if form.validate_on_submit():
+#         product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
+#         if product_name is None:
+#             product = Product(pro_name=form.pro_name.data, person=form.person.data)
+#             db.session.add(product)
+#             db.session.commit()
+#             # return redirect(url_for('main.index'))
+#
+#         else:
+#             flash('hava exic')
+#     return render_template('t-addpro.html', form=form)
 
 @main.route('/product-table', methods=['GET', 'POST'])
-def taddproduct():
+def product_table():  # taddproduct
     form = AddProduct()
     form1 = DeleteProductForm()
     form2 = EditProduct()
@@ -47,11 +42,14 @@ def taddproduct():
             product = Product(pro_name=form.pro_name.data, person=form.person.data)
             db.session.add(product)
             db.session.commit()
-            return redirect(url_for('main.taddproduct'))
+            return redirect(url_for('main.product_table'))
         else:
             flash(u'产品已存在')
     else:
         page = request.args.get('page', 1, type=int)
+
+    if form.errors:
+        flash(u'添加失败')
 
     result = Product.query.order_by(Product.create_time)
 
@@ -61,7 +59,7 @@ def taddproduct():
     products = pagination_search.items
 
     return render_template('product-table.html', form=form, form1=form1, form2=form2, pagination=pagination,
-                           page=page, endpoint='main.taddproduct', products=products)
+                           page=page, endpoint='main.product_table', products=products)
 
 @main.route('/product-table/get-product-info/<int:id>')
 def get_product_info(id):
@@ -94,10 +92,10 @@ def edit_product():
             db.session.add(product)
             db.session.commit()
             flash(u'修改成功')
-            return redirect(url_for('main.taddproduct', page=page))
+            return redirect(url_for('main.product_table', page=page))
     if form2.errors:
         flash(u'修改失败')
-    return redirect(url_for('main.taddproduct',page=page))
+    return redirect(url_for('main.product_table', page=page))
 
 @main.route('/product-table/delete-product', methods=['GET', 'POST'])
 def delete_product():
@@ -122,7 +120,7 @@ def delete_product():
     if form.errors:
         flash(u'删除失败')
 
-    return redirect(url_for('main.taddproduct'))
+    return redirect(url_for('main.product_table'))
 
 
 @main.route('/package-table', methods=['GET', 'POST'])
@@ -130,6 +128,7 @@ def packagetable():
     form = AddPackage()
     form1 = ManagePackageForm()
     form2 = DeletePackageForm()
+    form3 = EditPackage()
 
     products = [(pro.id, pro.pro_name) for pro in Product.query.all()]
     products.append((-1, u'全部产品'))
@@ -137,7 +136,7 @@ def packagetable():
 
     pagination_search = 0
 
-    if form1.validate_on_submit():
+    if form1.validate_on_submit():  # 判断是否查询
         product_id = form1.product.data
         page = 1
     else:
@@ -164,7 +163,7 @@ def packagetable():
                 page, per_page=10, error_out=False)
         packages = pagination.items
 
-    if form.validate_on_submit():
+    if form.validate_on_submit():  # 判断是否新增
 
         package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
                                                     data_Date=form.data_Date.data).first()
@@ -179,7 +178,57 @@ def packagetable():
         else:
             flash(u'该产品包号已存当天的数据噜')
     return render_template('package-table.html', packages=packages, pagination=pagination,
-                           form=form, form1=form1, form2=form2, product_id=product_id, page=page, endpoint='main.packagetable')
+                           form=form, form1=form1, form2=form2, form3=form3, product_id=product_id,
+                           page=page, endpoint='main.packagetable')
+
+
+@main.route('/package-table/get-package-info/<int:id>')
+def get_package_info(id):
+    if request.is_xhr:
+        package = Product_sub.query.get_or_404(id)
+        return jsonify({
+            'product_id': package.product_id,
+            'productname': package.product.pro_name,
+            'pro_id': package.product.id,
+            'package': package.package,
+            'data': package.data,
+            'data_Date': str(package.data_Date)
+        })
+
+
+@main.route('/package-table/edit-package', methods=['POST'])
+def edit_package():
+    form3 = EditPackage()
+    page = request.args.get('page', 1, type=int)
+    '''---------'''
+    form3.pro_id.choices
+    if form3.validate_on_submit():
+        package_id = int(form3.package_id.data)
+        # package_dataDate = form3.data_Date.data
+
+        if Product_sub.query.filter_by(product_id=form3.pro_id.data, package=form3.package.data,
+                                       data_Date=form3.data_Date.data).first() \
+                and Product_sub.query.filter_by(product_id=form3.product_id.data, package=form3.package.data,
+                                       data_Date=form3.data_Date.data).first().id != package_id:
+            flash(u'已存在该产品')
+        else:
+            package_eidt = form3.package.data
+            data_edit = form3.data.data
+            data_Date_edit = form3.data_Date.data
+
+            package = Product_sub.query.get_or_404(package_id)
+            package.package = package_eidt
+            package.data = data_edit
+            package.data_Date = data_Date_edit
+
+            db.session.add(package)
+            db.session.commit()
+            flash(u'修改成功')
+            return redirect(url_for('main.packagetable', page=page))
+    if form3.errors:
+        print form3.errors
+        flash(u'修改失败')
+    return redirect(url_for('main.packagetable', page=page))
 
 
 @main.route('/package-table/delete-package', methods=['GET', 'POST'])
@@ -205,25 +254,26 @@ def delete_package():
     return redirect(url_for('main.packagetable'))
 
 
-@main.route('/t-addpackage.html', methods=['GET', 'POST'])
-def taddpack():
-    form = AddPackage()
-    if form.validate_on_submit():
-        package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
-                                                    data_Date=form.data_Date.data).first()
-        if package_exist is None:
-            product = Product.query.filter_by(id=form.pro_id.data).first()
-            package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
-                                  last_time=datetime.now(), data=form.data.data)
-            db.session.add(package)
-            db.session.commit()
-            return redirect(url_for('main.index'))
+# @main.route('/t-addpackage.html', methods=['GET', 'POST'])
+# def taddpack():
+#     form = AddPackage()
+#     if form.validate_on_submit():
+#         package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
+#                                                     data_Date=form.data_Date.data).first()
+#         if package_exist is None:
+#             product = Product.query.filter_by(id=form.pro_id.data).first()
+#             package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
+#                                   last_time=datetime.now(), data=form.data.data)
+#             db.session.add(package)
+#             db.session.commit()
+#             return redirect(url_for('main.index'))
+#
+#         else:
+#             flash('wodemamayayafdpfkjdsjfisdjifosdjofijsdoifjsfjisj')
+#
+#     return render_template('t-addpackage.html', form=form)
 
-        else:
-            flash('wodemamayayafdpfkjdsjfisdjifosdjofijsdoifjsfjisj')
-
-    return render_template('t-addpackage.html', form=form)
-@main.route('/t-query', methods=['GET', 'POST'])
+@main.route('/dataview', methods=['GET', 'POST'])
 # @main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
     form = SearchForm()
@@ -231,14 +281,14 @@ def search():
         begin_date = form.begin_time.data
         end_date = form.end_time.data
         result =Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-            order_by(Product.pro_name,Product_sub.package).filter(Product_sub.data_Date.between(begin_date,end_date))
+            order_by(Product.pro_name,Product_sub.package).filter(Product_sub.data_Date.between(begin_date, end_date))
     else:
     # sql=Product_sub.query.outerjoin(Product).filter()
         result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-            order_by(Product.pro_name,Product_sub.package).all()
+            order_by(Product.pro_name, Product_sub.package).all()
 
         # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
     # return render_template('t-search.html', result=result)
-    return render_template('t-query.html', result=result, form=form)
+    return render_template('dataview.html', result=result, form=form)
 
 # trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))
