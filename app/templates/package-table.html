@@ -146,12 +146,12 @@
                     <div class="form-group">
                         {{ form3.hidden_tag() }}
                         {{ form3.package_id(type='hidden') }}
-                        {{ form3.pro_id(type='hidden') }}
                         <label for="input1" class="col-lg-2 control-label">
                             {{ form3.productname.label }}:
                         </label>
                         <div class="col-lg-10">
-                            {{ form3.productname(id='editProname',required='',disabled=True) }}
+                            {{ form3.pro_id(id='editProname')}}
+
                         </div>
                     </div>
 

@@ -130,25 +130,26 @@ def packagetable():
     form2 = DeletePackageForm()
     form3 = EditPackage()
 
-    products = [(pro.id, pro.pro_name) for pro in Product.query.all()]
-    products.append((-1, u'全部产品'))
-    form1.product.choices = products
+    product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.all()]
+    product_choices.append((-1, u'全部产品'))
+    form1.product.choices = product_choices
+    # form3.pro_id.choices = product_choices
 
     pagination_search = 0
 
     if form1.validate_on_submit():  # 判断是否查询
-        product_id = form1.product.data
+        productid_choice = form1.product.data  # 根据产品ID查询产品的数据
         page = 1
     else:
-        product_id = request.args.get('product_id', -1, type=int)
-        form1.product.data = product_id
+        productid_choice = request.args.get('product_id', -1, type=int)  # 查询全部产品
+        form1.product.data = productid_choice
         page = request.args.get('page', 1, type=int)
 
-    result = Product_sub.query.order_by(Product_sub.product_id,Product_sub.package)
+    result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
 
-    if product_id != -1:
-        product = Product.query.get_or_404(product_id)
-        result = result.filter_by(product=product)
+    if productid_choice != -1:
+        product = Product.query.get_or_404(productid_choice)
+        result = result.filter_by(product=product)  # 再添加查询条件
     #  制作分页的
         pagination_search = result.paginate(
             page, per_page=10, error_out=False)
@@ -159,7 +160,7 @@ def packagetable():
 
     else:
         page = request.args.get('page', 1, type=int)
-        pagination = Product_sub.query.order_by(Product_sub.product_id,Product_sub.package).paginate(
+        pagination = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package).paginate(
                 page, per_page=10, error_out=False)
         packages = pagination.items
 
@@ -178,7 +179,7 @@ def packagetable():
         else:
             flash(u'该产品包号已存当天的数据噜')
     return render_template('package-table.html', packages=packages, pagination=pagination,
-                           form=form, form1=form1, form2=form2, form3=form3, product_id=product_id,
+                           form=form, form1=form1, form2=form2, form3=form3,
                            page=page, endpoint='main.packagetable')
 
 
@@ -187,9 +188,7 @@ def get_package_info(id):
     if request.is_xhr:
         package = Product_sub.query.get_or_404(id)
         return jsonify({
-            'product_id': package.product_id,
-            'productname': package.product.pro_name,
-            'pro_id': package.product.id,
+            'product_name': package.product.pro_name,
             'package': package.package,
             'data': package.data,
             'data_Date': str(package.data_Date)

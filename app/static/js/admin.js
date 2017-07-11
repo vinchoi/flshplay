@@ -11,7 +11,7 @@ function get_product_info(url, id) {
 //JS For edit package to get its info
 function get_package_info(url, id) {
     $.getJSON(url, function(data) {
-        $('#editProname').val(data.productname);
+        $('#editProname').val(data.product_name);
         $('#editPackage').val(data.package);
         $('#editData').val(data.data);
         $('#editDataData').val(data.data_Date);
