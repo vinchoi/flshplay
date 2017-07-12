@@ -188,7 +188,7 @@ def get_package_info(id):
     if request.is_xhr:
         package = Product_sub.query.get_or_404(id)
         return jsonify({
-            'product_name': package.product.pro_name,
+            'product': package.product.id,
             'package': package.package,
             'data': package.data,
             'data_Date': str(package.data_Date)
@@ -205,9 +205,10 @@ def edit_package():
         package_id = int(form3.package_id.data)
         # package_dataDate = form3.data_Date.data
 
+        #  判断条件1:当前产品 and 产品包号 and 该包号当天的数据 是否存在  2.如果存在,是否为当前修改数据 是的话可以修改,不是不可以
         if Product_sub.query.filter_by(product_id=form3.pro_id.data, package=form3.package.data,
                                        data_Date=form3.data_Date.data).first() \
-                and Product_sub.query.filter_by(product_id=form3.product_id.data, package=form3.package.data,
+                and Product_sub.query.filter_by(product_id=form3.pro_id.data, package=form3.package.data,
                                        data_Date=form3.data_Date.data).first().id != package_id:
             flash(u'已存在该产品')
         else:
