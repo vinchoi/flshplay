@@ -5,20 +5,23 @@ from wtforms import StringField, SubmitField, IntegerField, SelectField, DateTim
 from wtforms.validators import length, DataRequired
 from ..models import Product, Product_sub
 
-class ManagePackageForm(FlaskForm):
-    product = SelectField(u'产品', coerce=int)
-    submit = SubmitField(u'筛选')
-
 class AddProduct(FlaskForm):
     pro_name = StringField(u'产品名称', validators=[DataRequired()])
     person = StringField(u'对接人', validators=[DataRequired()])
     submit = SubmitField(u'保存')
 
+
 class EditProduct(AddProduct):
     product_id = StringField(validators=[DataRequired()])
 
+
 class DeleteProductForm(FlaskForm):
     productId = StringField(validators=[DataRequired()])
+
+
+class ManagePackageForm(FlaskForm):
+    product = SelectField(u'产品', coerce=int)
+    submit = SubmitField(u'筛选')
 
 
 class AddPackage(FlaskForm):
@@ -41,7 +44,8 @@ class DeletePackageForm(FlaskForm):
     packageId = StringField(validators=[DataRequired()])
 
 
+#  用于数据查看页
 class SearchForm(FlaskForm):
-    begin_time =DateField(u'开始时间:')
-    end_time =DateField(u'结束时间:')
+    begin_time = DateField(u'开始时间:')
+    end_time = DateField(u'结束时间:')
     submit = SubmitField(u'搜索')
