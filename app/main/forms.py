@@ -1,9 +1,9 @@
 #coding:utf-8
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, SelectField, DateTimeField, TextAreaField, DateField
-from wtforms.validators import length, DataRequired
-from ..models import Product, Product_sub
+from wtforms import StringField, SubmitField, IntegerField, SelectField, DateField
+from wtforms.validators import DataRequired
+from ..models import Product
 
 class AddProduct(FlaskForm):
     pro_name = StringField(u'产品名称', validators=[DataRequired()])
@@ -19,7 +19,7 @@ class DeleteProductForm(FlaskForm):
     productId = StringField(validators=[DataRequired()])
 
 
-class ManagePackageForm(FlaskForm):
+class SearchPackageForm(FlaskForm):
     product = SelectField(u'产品', coerce=int)
     submit = SubmitField(u'筛选')
 
@@ -33,7 +33,7 @@ class AddPackage(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(AddPackage, self).__init__(*args, **kwargs)
-        self.pro_id.choices = [(pro.id, pro.pro_name) for pro in Product.query.all()]
+        self.pro_id.choices = [(choice.id, choice.pro_name) for choice in Product.query.all()]
 
 
 class EditPackage(AddPackage):

@@ -7,6 +7,22 @@
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
     <style type="text/css">
+    .formcontrol {
+      height: 32px;
+      padding: 5px 12px;
+      font-size: 14px;
+      line-height: 1.428571429;
+      color: #555555;
+      vertical-align: middle;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+      transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
     .df {
       display:flex;
       float: right;
@@ -26,21 +42,22 @@
             <!-- the script for the toggle all checkboxes from header is located in js/theme.js -->
                 <div class="row head">
                     <div class="col-md-12">
-                        <h1>产品包</h1>
+                        <h1>包数据</h1>
                     </div>
                 </div>
 
                 <div class="row filter-block">
                     <div class="pull-right">
                         <form method="post" action="">
-                        {{form.hidden_tag()}}
-                        {{ form1.product(class='ui-select') }}
+                        {{form1.hidden_tag()}}
+                        {{ form1.product(class='formcontrol') }}
                         {{ form1.submit(class='btn-flat ') }}
-                        <a data-toggle="modal" href="#myModal" class="btn-flat success">+ 添加产品</a>
+                        <a data-toggle="modal" href="#myModal" class="btn-flat success">+ 添加数据</a>
                     </form>
 
                     </div>
                 </div>
+                {% if packages  %}
 
                 <div class="row">
                     <table class="table table-hover">
@@ -70,39 +87,40 @@
                         <tbody>
                         {% for package in packages %}
                             <!-- row -->
-                            <tr class="first">
-                                <td>
-{#                                    <input type="checkbox" value="{{ package.id }}">#}
-                                    <a class="name">{{ loop.index }} </a>
-                                </td>
-                                <td class="description">
-                                    {{ package.product.pro_name }}
-                                </td>
-                                <td class="description">
-                                    {{ package.package }}包
-                                </td>
-                                <td class="description">
-                                    {{ package.data }}
-                                </td>
-                                <td class="description">
-                                    {{ package.data_Date }}
-                                </td>
-                                <td>
-                                    <ul class="actions">
-                                        <li><a onclick="get_package_info('{{ url_for('main.get_package_info',id=package.id) }}',{{ package.id }})">修改</a></li>
+                                <tr class="first">
+                                    <td>
+                                        <a class="name">{{ loop.index }} </a>
+                                    </td>
+                                    <td class="description">
+                                        {{ package.product.pro_name }}
+                                    </td>
+                                    <td class="description">
+                                        {{ package.package }}包
+                                    </td>
+                                    <td class="description">
+                                        {{ package.data }}
+                                    </td>
+                                    <td class="description">
+                                        {{ package.data_Date }}
+                                    </td>
+                                    <td>
+                                        <ul class="actions">
+                                            <li><a onclick="get_package_info('{{ url_for('main.get_package_info',id=package.id) }}',{{ package.id }})">修改</a></li>
 
-                                            <form class="df" id="delForm{{ package.id }}" method="post" action="{{ url_for('main.delete_package') }}">
-                                                {{ form2.hidden_tag() }}
-                                                {{form2.packageId(type='hidden',value=package.id)  }}
-                                                <a onclick="delPack({{ package.id }}) ">删除</a>
-                                            </form>
-                                    </ul>
-                                </td>
-                            </tr>
+                                                <form class="df" id="delForm{{ package.id }}" method="post" action="{{ url_for('main.delete_package') }}">
+                                                    {{ form2.hidden_tag() }}
+                                                    {{form2.packageId(type='hidden',value=package.id)  }}
+                                                    <a onclick="delPack({{ package.id }}) ">删除</a>
+                                                </form>
+                                        </ul>
+                                    </td>
+                                </tr>
                         {% endfor %}
-                          </tbody>
+                           </tbody>
                     </table>
                 </div>
+                {% else %}<p align="center">没有数据</p>
+                {% endif %}
             </div>
               <div class="pagination">
             {{ macros.pagination_widget(pagination, endpoint) }}
@@ -133,6 +151,8 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+
+        <!-- 修改产品数据: For delete an article confirm -->
    <div class="modal fade" id="editPackageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -150,8 +170,7 @@
                             {{ form3.pro_id.label }}:
                         </label>
                         <div class="col-lg-10">
-                            {{ form3.pro_id(id='editProname',disabled='disabled')}}
-
+                            {{ form3.pro_id(id='editProname', disabled='disabled')}}
                         </div>
                     </div>
 
@@ -182,7 +201,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-primary" onclick="goSubmit()">保存</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->
@@ -191,7 +210,7 @@
 
 
 
-      <!-- 新增产品 -->
+      <!-- 新增产品数据 -->
      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -263,6 +282,9 @@
             minView:2
 
         });
-
+        function goSubmit () {
+            $("#editProname").removeAttr("disabled");
+            $("#EditPackage").submit();
+        }
     </script>
     {% endblock %}

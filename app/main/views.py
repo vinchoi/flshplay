@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, flash, request, jsonify
-from .forms import AddProduct, AddPackage, SearchForm, ManagePackageForm, DeleteProductForm,\
+from .forms import AddProduct, AddPackage, SearchForm, SearchPackageForm, DeleteProductForm,\
     DeletePackageForm, EditProduct, EditPackage
 
 from . import main
@@ -16,7 +16,7 @@ def index():
 
 
 @main.route('/product-table', methods=['GET', 'POST'])
-def product_table():  # taddproduct
+def product_table():
     form = AddProduct()
     form1 = DeleteProductForm()
     form2 = EditProduct()
@@ -115,14 +115,13 @@ def delete_product():
 @main.route('/package-table', methods=['GET', 'POST'])
 def packagetable():
     form = AddPackage()
-    form1 = ManagePackageForm()
+    form1 = SearchPackageForm()
     form2 = DeletePackageForm()
     form3 = EditPackage()
 
     product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.all()]
     product_choices.append((-1, u'全部产品'))
     form1.product.choices = product_choices
-    # form3.pro_id.choices = product_choices
 
     pagination_search = 0
 
@@ -188,13 +187,10 @@ def get_package_info(id):
 def edit_package():
     form3 = EditPackage()
     page = request.args.get('page', 1, type=int)
-    '''---------'''
-    form3.pro_id.choices
     if form3.validate_on_submit():
         package_id = int(form3.package_id.data)
-        # package_dataDate = form3.data_Date.data
 
-        #  判断条件1:当前产品 and 产品包号 and 该包号当天的数据 是否存在  2.如果存在,是否为当前修改数据 是的话可以修改,不是不可以
+        #  判断条件1:当前产品id and 产品包号 and 该包号当天的数据 是否存在  2.如果存在,是否为当前修改数据 是的话可以修改,不是不可以
         if Product_sub.query.filter_by(product_id=form3.pro_id.data, package=form3.package.data,
                                        data_Date=form3.data_Date.data).first() \
                 and Product_sub.query.filter_by(product_id=form3.pro_id.data, package=form3.package.data,
@@ -244,7 +240,6 @@ def delete_package():
 
 
 @main.route('/dataview', methods=['GET', 'POST'])
-# @main.route('/t-search.html', methods=['GET', 'POST'])
 def search():
     form = SearchForm()
     if form.validate_on_submit():
@@ -253,12 +248,8 @@ def search():
         result =Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
             order_by(Product.pro_name,Product_sub.package).filter(Product_sub.data_Date.between(begin_date, end_date))
     else:
-    # sql=Product_sub.query.outerjoin(Product).filter()
         result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
             order_by(Product.pro_name, Product_sub.package).all()
 
-        # 'select PS.package 包号,P.pro_name 产品名称,P.person 对接人,PS.last_time 修改时间 from product_sub AS PS LEFT JOIN product AS P on P.id = PS.product_id'
-    # return render_template('t-search.html', result=result)
     return render_template('dataview.html', result=result, form=form)
 
-# trans_details.query.outerjoin(Uses).filter(Users.username.like('%xx%'))
