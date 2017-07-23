@@ -7,7 +7,6 @@
         {% endblock %}  -娱玩后台管理
     </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- bootstrap -->
@@ -69,7 +68,7 @@
                 </a>
             </li>
             <li class="settings hidden-xs hidden-sm">
-                <a href="signin.html" role="button">
+                <a href="{{ url_for('auth.logout') }}" role="button">
                     <i class="icon-share-alt"></i>
                 </a>
             </li>
