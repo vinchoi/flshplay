@@ -8,14 +8,17 @@ from .forms import AddProduct, AddPackage, SearchForm, SearchPackageForm, Delete
 from . import main
 from .. import db
 from ..models import Product_sub, Product
+from flask_login import login_required
 
 @main.route('/')
 @main.route('/index', methods=['GET', 'POST'])
+# @login_required
 def index():
     return render_template('index.html')
 
 
 @main.route('/product-table', methods=['GET', 'POST'])
+@login_required
 def product_table():
     form = AddProduct()
     form1 = DeleteProductForm()
@@ -49,6 +52,7 @@ def product_table():
 
 
 @main.route('/product-table/get-product-info/<int:id>')
+@login_required
 def get_product_info(id):
     if request.is_xhr:
         product = Product.query.get_or_404(id)
@@ -59,6 +63,7 @@ def get_product_info(id):
 
 
 @main.route('/product-table/edit-product', methods=['POST'])
+@login_required
 def edit_product():
     form2 = EditProduct()
     page = request.args.get('page', 1, type=int)
@@ -87,6 +92,7 @@ def edit_product():
 
 
 @main.route('/product-table/delete-product', methods=['GET', 'POST'])
+@login_required
 def delete_product():
     form = DeleteProductForm()
 
@@ -113,6 +119,7 @@ def delete_product():
 
 
 @main.route('/package-table', methods=['GET', 'POST'])
+@login_required
 def packagetable():
     form = AddPackage()
     form1 = SearchPackageForm()
@@ -172,6 +179,7 @@ def packagetable():
 
 
 @main.route('/package-table/get-package-info/<int:id>')
+@login_required
 def get_package_info(id):
     if request.is_xhr:
         package = Product_sub.query.get_or_404(id)
@@ -184,6 +192,7 @@ def get_package_info(id):
 
 
 @main.route('/package-table/edit-package', methods=['POST'])
+@login_required
 def edit_package():
     form3 = EditPackage()
     page = request.args.get('page', 1, type=int)
@@ -217,6 +226,7 @@ def edit_package():
 
 
 @main.route('/package-table/delete-package', methods=['GET', 'POST'])
+@login_required
 def delete_package():
     form = DeletePackageForm()
 
@@ -240,6 +250,7 @@ def delete_package():
 
 
 @main.route('/dataview', methods=['GET', 'POST'])
+@login_required
 def search():
     form = SearchForm()
     if form.validate_on_submit():
