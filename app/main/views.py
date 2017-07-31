@@ -10,9 +10,13 @@ from .. import db
 from ..models import Product_sub, Product
 from flask_login import login_required
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
+def rout():
+    return redirect(url_for('auth.login'))
+
+
 @main.route('/index', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def index():
     return render_template('index.html')
 
