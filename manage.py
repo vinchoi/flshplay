@@ -4,7 +4,7 @@ from app.models import Product, Product_sub, Role, User
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
-app = creat_app('default')
+app = creat_app('production')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
