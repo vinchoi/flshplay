@@ -1,6 +1,6 @@
 #coding:utf-8
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import render_template, session, redirect, url_for, flash, request, jsonify
 from .forms import AddProduct, AddPackage, SearchForm, SearchPackageForm, DeleteProductForm,\
     DeletePackageForm, EditProduct, EditPackage
@@ -125,6 +125,7 @@ def delete_product():
 @main.route('/package-table', methods=['GET', 'POST'])
 @login_required
 def packagetable():
+    productid_choice = request.args.get('productid_choice', -1, type=int)
     form = AddPackage()
     form1 = SearchPackageForm()
     form2 = DeletePackageForm()
@@ -136,24 +137,28 @@ def packagetable():
 
     pagination_search = 0
 
-    if form1.validate_on_submit():  # 判断是否查询
-        productid_choice = form1.product.data  # 根据产品ID查询产品的数据
-        page = 1
-    else:
-        productid_choice = request.args.get('product_id', -1, type=int)  # 查询全部产品
-        form1.product.data = productid_choice
-        page = request.args.get('page', 1, type=int)
+    if form1.validate_on_submit() or request.args.get('productid_choice') is not None:  # 判断是否查询 或 是否携带产品id
 
-    result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+        if form1.validate_on_submit():  # 判断是否查询
+            productid_choice = form1.product.data  # 根据产品ID查询产品的数据
+            page = 1
+        else:
+            productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
+            form1.product.data = productid_choice
+            page = request.args.get('page', 1, type=int)
 
-    if productid_choice != -1:
-        product = Product.query.get_or_404(productid_choice)
-        result = result.filter_by(product=product)  # 再添加查询条件
-    #  制作分页的
+        result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+
+        if productid_choice != -1:  # 判断是否筛选产品
+            product = Product.query.get_or_404(productid_choice)
+            result = result.filter_by(product=product)  # 再添加查询条件
+        #  制作分页的
         pagination_search = result.paginate(
-            page, per_page=10, error_out=False)
+                page, per_page=10, error_out=False)
+    else:
+        form1.product.data = productid_choice
 
-    if pagination_search != 0:
+    if pagination_search != 0:  # 判断是否
         pagination = pagination_search
         packages = pagination_search.items
 
@@ -179,7 +184,7 @@ def packagetable():
             flash(u'该产品包号已存当天的数据噜')
     return render_template('package-table.html', packages=packages, pagination=pagination,
                            form=form, form1=form1, form2=form2, form3=form3,
-                           page=page, endpoint='main.packagetable')
+                           page=page, productid_choice=productid_choice, endpoint='main.packagetable')
 
 
 @main.route('/package-table/get-package-info/<int:id>')
@@ -257,14 +262,23 @@ def delete_package():
 @login_required
 def search():
     form = SearchForm()
-    if form.validate_on_submit():
-        begin_date = form.begin_time.data
-        end_date = form.end_time.data
-        result =Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-            order_by(Product.pro_name,Product_sub.package).filter(Product_sub.data_Date.between(begin_date, end_date))
+    begin_date = form.begin_time.data
+    end_date = form.end_time.data
+
+    if begin_date or end_date:
+
+        if begin_date is not None and end_date is None:  # 结束时间为空,查询到后一个月
+            end_date = begin_date + timedelta(days=31)
+
+        if begin_date is None and end_date is not None:  # 开始时间为空,查询到前一个月
+            begin_date = end_date + timedelta(days=-31)
+
+        result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+            order_by(Product.pro_name, Product_sub.package, Product_sub.data_Date)\
+            .filter(Product_sub.data_Date.between(begin_date, end_date))
     else:
         result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-            order_by(Product.pro_name, Product_sub.package).all()
+            order_by(Product.pro_name, Product_sub.package, Product_sub.data_Date).all()
 
     return render_template('dataview.html', result=result, form=form)
 
