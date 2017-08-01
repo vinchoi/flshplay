@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block title %}  包包管理页 {% endblock %}
+{% block title %}  产品数据管理页 {% endblock %}
 {% block head %}
     <link href="{{url_for('static',filename='css/compiled/tables.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{url_for('static',filename='css/bootstrap/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" type="text/css"/>
@@ -42,7 +42,7 @@
             <!-- the script for the toggle all checkboxes from header is located in js/theme.js -->
                 <div class="row head">
                     <div class="col-md-12">
-                        <h1>包数据</h1>
+                        <h1>产品数据</h1>
                     </div>
                 </div>
 
@@ -64,7 +64,6 @@
                         <thead>
                             <tr>
                                 <th class="col-md-1">
-{#                                    <input type="checkbox">#}
                                     序号
                                 </th>
                                 <th class="col-md-1">
@@ -123,7 +122,7 @@
                 {% endif %}
             </div>
               <div class="pagination">
-            {{ macros.pagination_widget(pagination, endpoint) }}
+            {{ macros.pagination_widget(pagination, endpoint, productid_choice=productid_choice) }}
         </div>
             <!-- end products table -->
        </div>

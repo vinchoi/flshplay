@@ -13,7 +13,7 @@
     }
 
     #form1 input {
-        height: 30px !important;
+        height: 28px !important;
     }
     </style>
     {{ super() }}
@@ -32,8 +32,9 @@
                         <form id="form1" class="clearfix" action="" method="post" >
 
                         {{ form.hidden_tag() }}
-                        {{ wtf.form_field(form.begin_time,class="form_datetime") }} &nbsp;&nbsp;&nbsp; {{ wtf.form_field(form.end_time,class="form_datetime") }}
-                        {{ wtf.form_field(form.submit) }}
+                        {{ form.begin_time.label }}{{ form.begin_time(class="form_datetime",readonly=True) }} &nbsp;&nbsp;&nbsp;{{ form.end_time.label }} {{ form.end_time(class="form_datetime",readonly=True) }}
+                        {{ form.submit(class='btn btn-default') }}
+                        <input class="btn btn-default" type="button" onclick="formReset()" value="重置">
                         </form>
                     </div>
                 </div>
@@ -101,6 +102,13 @@
         autoclose:1,
         minView:2
     });
+    </script>
+
+    <script type="text/javascript">
+        function formReset()
+        {
+        document.getElementById("form1").reset()
+        }
     </script>
 
     {% endblock %}
