@@ -32,7 +32,7 @@
                         <form id="form1" class="clearfix" action="" method="post" >
 
                         {{ form.hidden_tag() }}
-                        {{ form.begin_time.label }}{{ form.begin_time(class="form_datetime",readonly=True) }} &nbsp;&nbsp;&nbsp;{{ form.end_time.label }} {{ form.end_time(class="form_datetime",readonly=True) }}
+                        {{ form.begin_time.label }}{{ form.begin_time(id="s_bt",class="form_datetime",readonly=True) }} &nbsp;&nbsp;&nbsp;{{ form.end_time.label }} {{ form.end_time(id="s_et",class="form_datetime",readonly=True) }}
                         {{ form.submit(class='btn btn-default') }}
                         <input class="btn btn-default" type="button" onclick="formReset()" value="重置">
                         </form>
@@ -107,7 +107,10 @@
     <script type="text/javascript">
         function formReset()
         {
-        document.getElementById("form1").reset()
+{#        document.getElementById("form1").reset()#}
+          $("#s_bt").val("");
+          $("#s_et").val("");
+
         }
     </script>
 
