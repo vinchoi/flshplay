@@ -31,9 +31,12 @@ class AddPackage(FlaskForm):
     data_Date = DateField(u'数据日期', validators=[DataRequired()])
     submit = SubmitField(u'保存')
 
-    def __init__(self, userid):
-        super(AddPackage, self).__init__(userid)
-        self.pro_id.choices = [(choice.id, choice.pro_name) for choice in Product.query.filter_by(create_by=userid)]
+    def __init__(self, *args, **kwargs):
+        super(AddPackage, self).__init__(*args, **kwargs)
+        # self.pro_id.choices = [(choice.id, choice.pro_name) for choice in Product.query.all()]
+        userid = [id for id in args]
+        self.pro_id.choices = \
+            [(choice.id, choice.pro_name) for choice in Product.query.filter_by(create_by=int(userid[0]))]
 
 
 class EditPackage(AddPackage):

@@ -131,15 +131,13 @@ def delete_product():
 @login_required
 def packagetable():
     productid_choice = request.args.get('productid_choice', -1, type=int)
-    print type(current_user.id)
-    form = AddPackage(userid=current_user.id)
+    form = AddPackage(str(current_user.id))
     form1 = SearchPackageForm()
     form2 = DeletePackageForm()
-    form3 = EditPackage()
+    form3 = EditPackage(str(current_user.id))
 
     product_choices = [(product_choice.id, product_choice.pro_name)
                        for product_choice in Product.query.filter_by(create_by=current_user.id)]
-    # form.pro_id.choices=product_choices  # 添加数据时选择
     product_choices.append((-1, u'全部产品'))
     form1.product.choices = product_choices  # 筛选时选择
 
