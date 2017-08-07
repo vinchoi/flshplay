@@ -4,14 +4,14 @@ from datetime import datetime, timedelta
 from flask import render_template, session, redirect, url_for, flash, request, jsonify
 from .forms import AddProduct, AddPackage, SearchForm, SearchPackageForm, DeleteProductForm,\
     DeletePackageForm, EditProduct, EditPackage
+from flask_login import login_required, current_user
 
 from . import main
 from .. import db
 from ..models import Product_sub, Product
-from flask_login import login_required, current_user
 
 @main.route('/', methods=['GET', 'POST'])
-def rout():
+def root():
     return redirect(url_for('auth.login'))
 
 
@@ -44,7 +44,7 @@ def product_table():
     if form.errors:
         flash(u'添加失败')
 
-    if current_user.id != 1:
+    if current_user.id != 1:  # 1是管理员
         result = Product.query.order_by(Product.create_time).filter_by(create_by=current_user.id)
     else:
         result = Product.query.order_by(Product.create_time)
@@ -136,8 +136,7 @@ def packagetable():
     form2 = DeletePackageForm()
     form3 = EditPackage(str(current_user.id))
 
-    product_choices = [(product_choice.id, product_choice.pro_name)
-                       for product_choice in Product.query.filter_by(create_by=current_user.id)]
+    product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.filter_by(create_by=current_user.id)]
     product_choices.append((-1, u'全部产品'))
     form1.product.choices = product_choices  # 筛选时选择
 
@@ -197,6 +196,9 @@ def packagetable():
 
         else:
             flash(u'该产品包号已存当天的数据噜')
+
+    if form.errors:
+        flash(form.errors)
     return render_template('package-table.html', packages=packages, pagination=pagination,
                            form=form, form1=form1, form2=form2, form3=form3,
                            page=page, productid_choice=productid_choice, endpoint='main.packagetable')
