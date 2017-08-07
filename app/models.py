@@ -10,6 +10,7 @@ class Product(db.Model):
     pro_name = db.Column(db.String(64), unique=True)
     person = db.Column(db.String(10))
     create_time = db.Column(db.DateTime, default=datetime.now())
+    create_by = db.Column(db.Integer)
     product_sub = db.relationship('Product_sub', backref='product', lazy='dynamic')
 
     # def __init__(self, pro_name, create_time=None):
