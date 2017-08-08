@@ -197,8 +197,8 @@ def packagetable():
         else:
             flash(u'该产品包号已存当天的数据噜')
 
-    if form.errors:
-        flash(form.errors)
+    # if form.errors:
+    #     flash(form.errors)
     return render_template('package-table.html', packages=packages, pagination=pagination,
                            form=form, form1=form1, form2=form2, form3=form3,
                            page=page, productid_choice=productid_choice, endpoint='main.packagetable')
@@ -220,7 +220,7 @@ def get_package_info(id):
 @main.route('/package-table/edit-package', methods=['POST'])
 @login_required
 def edit_package():
-    form3 = EditPackage()
+    form3 = EditPackage(userid=current_user.id)
     page = request.args.get('page', 1, type=int)
     if form3.validate_on_submit():
         package_id = int(form3.package_id.data)
