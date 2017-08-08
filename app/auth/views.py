@@ -2,7 +2,7 @@
 
 from flask import render_template, flash, redirect, url_for, request
 from . import auth
-from flask_login import login_required, logout_user, login_user
+from flask_login import login_required, logout_user, login_user, current_user
 from .forms import LoginForm
 from ..models import User
 
@@ -10,6 +10,8 @@ from ..models import User
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.verify_password(form.password.data):

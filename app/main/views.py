@@ -4,14 +4,14 @@ from datetime import datetime, timedelta
 from flask import render_template, session, redirect, url_for, flash, request, jsonify
 from .forms import AddProduct, AddPackage, SearchForm, SearchPackageForm, DeleteProductForm,\
     DeletePackageForm, EditProduct, EditPackage
+from flask_login import login_required, current_user
 
 from . import main
 from .. import db
 from ..models import Product_sub, Product
-from flask_login import login_required
 
 @main.route('/', methods=['GET', 'POST'])
-def rout():
+def root():
     return redirect(url_for('auth.login'))
 
 
@@ -29,10 +29,10 @@ def product_table():
     form2 = EditProduct()
 
     if form.validate_on_submit():
-        product_name = Product.query.filter_by(pro_name=form.pro_name.data).first()
+        product_name = Product.query.filter_by(pro_name=form.pro_name.data, create_by=current_user.id).first()
         page = 1
         if product_name is None:
-            product = Product(pro_name=form.pro_name.data, person=form.person.data)
+            product = Product(pro_name=form.pro_name.data.strip(), person=form.person.data.strip(), create_by=current_user.id)
             db.session.add(product)
             db.session.commit()
             return redirect(url_for('main.product_table'))
@@ -44,7 +44,10 @@ def product_table():
     if form.errors:
         flash(u'添加失败')
 
-    result = Product.query.order_by(Product.create_time)
+    if current_user.id != 1:  # 1是管理员
+        result = Product.query.order_by(Product.create_time).filter_by(create_by=current_user.id)
+    else:
+        result = Product.query.order_by(Product.create_time)
 
     pagination_search = result.paginate(page, per_page=10, error_out=False)
 
@@ -73,9 +76,11 @@ def edit_product():
     page = request.args.get('page', 1, type=int)
     if form2.validate_on_submit():
         product_id = int(form2.product_id.data)
+        create_userid = Product.query.filter_by(id=product_id).first().create_by
 
-        if Product.query.filter_by(pro_name=form2.pro_name.data).first() \
-                and Product.query.filter_by(pro_name=form2.pro_name.data).first().id != product_id:
+        if Product.query.filter_by(pro_name=form2.pro_name.data.strip(), create_by=create_userid).first() \
+                and Product.query.filter_by\
+                            (pro_name=form2.pro_name.data.strip(), create_by=create_userid).first().id != product_id:
 
             flash(u'已存在该产品')
 
@@ -126,14 +131,14 @@ def delete_product():
 @login_required
 def packagetable():
     productid_choice = request.args.get('productid_choice', -1, type=int)
-    form = AddPackage()
+    form = AddPackage(userid=current_user.id)
     form1 = SearchPackageForm()
     form2 = DeletePackageForm()
-    form3 = EditPackage()
+    form3 = EditPackage(userid=current_user.id)
 
-    product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.all()]
+    product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.filter_by(create_by=current_user.id)]
     product_choices.append((-1, u'全部产品'))
-    form1.product.choices = product_choices
+    form1.product.choices = product_choices  # 筛选时选择
 
     pagination_search = 0
 
@@ -142,33 +147,42 @@ def packagetable():
         if form1.validate_on_submit():  # 判断是否查询
             productid_choice = form1.product.data  # 根据产品ID查询产品的数据
             page = 1
+            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+
+        elif request.args.get('productid_choice') != u'-1':
+            productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
+            form1.product.data = productid_choice
+            page = request.args.get('page', 1, type=int)
+            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+
         else:
             productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
             form1.product.data = productid_choice
             page = request.args.get('page', 1, type=int)
+            result = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
+                order_by(Product_sub.product_id, Product_sub.package).\
+                filter(Product.create_by == current_user.id)
 
-        result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
-
-        if productid_choice != -1:  # 判断是否筛选产品
+        if productid_choice != -1:  # 非查询全部产品
             product = Product.query.get_or_404(productid_choice)
             result = result.filter_by(product=product)  # 再添加查询条件
         #  制作分页的
-        pagination_search = result.paginate(
-                page, per_page=10, error_out=False)
+        pagination_search = result.paginate(page, per_page=10, error_out=False)
     else:
-        form1.product.data = productid_choice
+        form1.product.data = productid_choice  # 赋值筛选栏的默认值
 
-    if pagination_search != 0:  # 判断是否
+    if pagination_search != 0:  # 判断是否带着查询数据
         pagination = pagination_search
         packages = pagination_search.items
 
-    else:
+    else:  # 查询全部产品
         page = request.args.get('page', 1, type=int)
-        pagination = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package).paginate(
-                page, per_page=10, error_out=False)
+        pagination = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
+            order_by(Product_sub.product_id, Product_sub.package).\
+            filter(Product.create_by == current_user.id).paginate(page, per_page=10, error_out=False)
         packages = pagination.items
 
-    if form.validate_on_submit():  # 判断是否新增
+    if form.validate_on_submit():  # 判断是否新增数据
 
         package_exist = Product_sub.query.filter_by(package=form.package.data, product_id=form.pro_id.data,
                                                     data_Date=form.data_Date.data).first()
@@ -182,6 +196,9 @@ def packagetable():
 
         else:
             flash(u'该产品包号已存当天的数据噜')
+
+    # if form.errors:
+    #     flash(form.errors)
     return render_template('package-table.html', packages=packages, pagination=pagination,
                            form=form, form1=form1, form2=form2, form3=form3,
                            page=page, productid_choice=productid_choice, endpoint='main.packagetable')
@@ -203,7 +220,7 @@ def get_package_info(id):
 @main.route('/package-table/edit-package', methods=['POST'])
 @login_required
 def edit_package():
-    form3 = EditPackage()
+    form3 = EditPackage(userid=current_user.id)
     page = request.args.get('page', 1, type=int)
     if form3.validate_on_submit():
         package_id = int(form3.package_id.data)
@@ -273,12 +290,13 @@ def search():
         if begin_date is None and end_date is not None:  # 开始时间为空,查询到前一个月
             begin_date = end_date + timedelta(days=-31)
 
-        result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+        result = Product_sub.query.outerjoin(Product, Product_sub.product_id == Product.id).add_entity(Product).\
             order_by(Product.pro_name, Product_sub.package, Product_sub.data_Date)\
-            .filter(Product_sub.data_Date.between(begin_date, end_date))
+            .filter(Product_sub.data_Date.between(begin_date, end_date), Product.create_by == current_user.id)
     else:
-        result = Product_sub.query.join(Product, Product_sub.product_id == Product.id).add_entity(Product).\
-            order_by(Product.pro_name, Product_sub.package, Product_sub.data_Date).all()
+        result = Product_sub.query.outerjoin(Product, Product_sub.product_id == Product.id).add_entity(Product).\
+            order_by(Product.pro_name, Product_sub.package, Product_sub.data_Date).\
+            filter(Product.create_by == current_user.id)
 
     return render_template('dataview.html', result=result, form=form)
 

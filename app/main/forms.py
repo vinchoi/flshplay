@@ -33,7 +33,10 @@ class AddPackage(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(AddPackage, self).__init__(*args, **kwargs)
-        self.pro_id.choices = [(choice.id, choice.pro_name) for choice in Product.query.all()]
+        # self.pro_id.choices = [(choice.id, choice.pro_name) for choice in Product.query.all()]
+        userid = kwargs['userid']
+        self.pro_id.choices = \
+            [(choice.id, choice.pro_name) for choice in Product.query.filter_by(create_by=userid)]
 
 
 class EditPackage(AddPackage):
