@@ -147,20 +147,20 @@ def packagetable():
         if form1.validate_on_submit():  # 判断是否查询
             productid_choice = form1.product.data  # 根据产品ID查询产品的数据
             page = 1
-            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date)  # 先总查询
 
         elif request.args.get('productid_choice') != u'-1':
             productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
             form1.product.data = productid_choice
             page = request.args.get('page', 1, type=int)
-            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package)  # 先总查询
+            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date)  # 先总查询
 
         else:
             productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
             form1.product.data = productid_choice
             page = request.args.get('page', 1, type=int)
             result = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
-                order_by(Product_sub.product_id, Product_sub.package).\
+                order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date).\
                 filter(Product.create_by == current_user.id)
 
         if productid_choice != -1:  # 非查询全部产品
