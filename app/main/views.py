@@ -136,6 +136,7 @@ def packagetable():
     form2 = DeletePackageForm()
     form3 = EditPackage(userid=current_user.id)
 
+    #  根据登录用户查询产品
     product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.filter_by(create_by=current_user.id)]
     product_choices.append((-1, u'全部产品'))
     form1.product.choices = product_choices  # 筛选时选择
@@ -178,7 +179,7 @@ def packagetable():
     else:  # 查询全部产品
         page = request.args.get('page', 1, type=int)
         pagination = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
-            order_by(Product_sub.product_id, Product_sub.package).\
+            order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date).\
             filter(Product.create_by == current_user.id).paginate(page, per_page=10, error_out=False)
         packages = pagination.items
 
@@ -189,7 +190,7 @@ def packagetable():
         if package_exist is None:
             product = Product.query.filter_by(id=form.pro_id.data).first()
             package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
-                                  last_time=datetime.now(), data=form.data.data)
+                                  create_time=datetime.now(), last_time=datetime.now(), data=form.data.data)
             db.session.add(package)
             db.session.commit()
             return redirect(url_for('main.packagetable'))
@@ -240,6 +241,7 @@ def edit_package():
             package.package = package_eidt
             package.data = data_edit
             package.data_Date = data_Date_edit
+            package.last_time = datetime.now()
 
             db.session.add(package)
             db.session.commit()

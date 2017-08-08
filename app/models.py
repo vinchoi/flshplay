@@ -28,8 +28,8 @@ class Product_sub(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     package = db.Column(db.Integer, default=0)
     data = db.Column(db.Integer, default=0)
-    data_Date = db.Column(db.Date, default=date.today())
-    create_time = db.Column(db.DateTime, default=datetime.now())
+    data_Date = db.Column(db.Date)
+    create_time = db.Column(db.DateTime)
     last_time = db.Column(db.DateTime)
 
     def __repr__(self):
