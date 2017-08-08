@@ -136,6 +136,7 @@ def packagetable():
     form2 = DeletePackageForm()
     form3 = EditPackage(userid=current_user.id)
 
+    #  根据登录用户查询产品
     product_choices = [(product_choice.id, product_choice.pro_name) for product_choice in Product.query.filter_by(create_by=current_user.id)]
     product_choices.append((-1, u'全部产品'))
     form1.product.choices = product_choices  # 筛选时选择
@@ -144,18 +145,24 @@ def packagetable():
 
     if form1.validate_on_submit() or request.args.get('productid_choice') is not None:  # 判断是否查询 或 是否携带产品id
 
-        if form1.validate_on_submit():  # 判断是否查询
-            productid_choice = form1.product.data  # 根据产品ID查询产品的数据
+        if form1.validate_on_submit():  # 判断是否通过点击查询按钮进入 1.全部产品,2 具体产品
+            productid_choice = form1.product.data
             page = 1
-            result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date)  # 先总查询
 
-        elif request.args.get('productid_choice') != u'-1':
-            productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
+            if productid_choice != -1:  # 查询2具体产品,步骤1
+                result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date)  # 先总查询
+            else:  # 查询1全部产品,步骤1
+                result = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
+                    order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date).\
+                    filter(Product.create_by == current_user.id)
+
+        elif request.args.get('productid_choice') != u'-1':  # 查询具体产品,点击页码进入,步骤1
+            productid_choice = request.args.get('productid_choice', type=int)
             form1.product.data = productid_choice
             page = request.args.get('page', 1, type=int)
             result = Product_sub.query.order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date)  # 先总查询
 
-        else:
+        else:  # 带参数-1查询全部,点击页码进入
             productid_choice = request.args.get('productid_choice', type=int)  # 查询产品
             form1.product.data = productid_choice
             page = request.args.get('page', 1, type=int)
@@ -163,22 +170,22 @@ def packagetable():
                 order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date).\
                 filter(Product.create_by == current_user.id)
 
-        if productid_choice != -1:  # 非查询全部产品
+        if productid_choice != -1:  # 查询具体产品,步骤3
             product = Product.query.get_or_404(productid_choice)
             result = result.filter_by(product=product)  # 再添加查询条件
         #  制作分页的
         pagination_search = result.paginate(page, per_page=10, error_out=False)
-    else:
+    else:  # 第一次访问页面
         form1.product.data = productid_choice  # 赋值筛选栏的默认值
 
-    if pagination_search != 0:  # 判断是否带着查询数据
+    if pagination_search != 0:  # 是否已进行分页操作
         pagination = pagination_search
         packages = pagination_search.items
 
-    else:  # 查询全部产品
+    else:  # 第一次访问页面 & 查询全部产品
         page = request.args.get('page', 1, type=int)
         pagination = db.session.query(Product_sub).outerjoin(Product, Product_sub.product_id == Product.id).\
-            order_by(Product_sub.product_id, Product_sub.package).\
+            order_by(Product_sub.product_id, Product_sub.package, Product_sub.data_Date).\
             filter(Product.create_by == current_user.id).paginate(page, per_page=10, error_out=False)
         packages = pagination.items
 
@@ -189,7 +196,7 @@ def packagetable():
         if package_exist is None:
             product = Product.query.filter_by(id=form.pro_id.data).first()
             package = Product_sub(product=product, package=form.package.data, data_Date=form.data_Date.data,
-                                  last_time=datetime.now(), data=form.data.data)
+                                  create_time=datetime.now(), last_time=datetime.now(), data=form.data.data)
             db.session.add(package)
             db.session.commit()
             return redirect(url_for('main.packagetable'))
@@ -240,6 +247,7 @@ def edit_package():
             package.package = package_eidt
             package.data = data_edit
             package.data_Date = data_Date_edit
+            package.last_time = datetime.now()
 
             db.session.add(package)
             db.session.commit()

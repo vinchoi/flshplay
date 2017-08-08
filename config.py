@@ -19,9 +19,8 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:Vin123456@@127.0.0.1/flshplay'
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-    # SQLALCHEMY_DATABASE_URI = 'mysql://root:Vin123456@@127.0.0.1/flshplay'
 
 
 
