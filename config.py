@@ -21,6 +21,18 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://root:Vin123456@@127.0.0.1/flshplay'
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        import logging
+        from logging import FileHandler
+        file_handler = FileHandler(filename='err.log', encoding='utf-8')
+        fmter = logging.Formatter(fmt="%(asctime)s %(filename)s[line:%(lineno)d] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+        file_handler.setFormatter(fmter)
+        file_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(file_handler)
+
 
 
 config = {
