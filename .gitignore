@@ -4,3 +4,4 @@ migrations/
 venv/
 *.DS_Store
 *.sqlite
+log/
