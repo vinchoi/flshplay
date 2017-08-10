@@ -27,7 +27,7 @@ class ProductionConfig(Config):
 
         import logging
         from logging import FileHandler
-        file_handler = FileHandler(filename='err.log', encoding='utf-8')
+        file_handler = FileHandler(filename='log/err.log', encoding='utf-8')
         fmter = logging.Formatter(fmt="%(asctime)s %(filename)s[line:%(lineno)d] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
         file_handler.setFormatter(fmter)
         file_handler.setLevel(logging.ERROR)
