@@ -18,6 +18,22 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
+    # @classmethod
+    # def init_app(cls, app):
+    #     Config.init_app(app)
+    #
+    #     import logging
+    #     from logging import FileHandler
+    #
+    #     logging.basicConfig(level=logging.DEBUG,
+    #                     format='%(asctime)s %(levelname)s %(message)s',
+    #                     datefmt='%a, %d %b %Y %H:%M:%S',
+    #                     filename='log\info1.log',
+    #                     filemode='w')
+    #
+    #     logging.debug('dddddddddd')
+
+
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://root:Vin123456@@127.0.0.1/flshplay'
 
